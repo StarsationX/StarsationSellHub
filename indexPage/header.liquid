@@ -1,0 +1,78 @@
+<div class="flex flex-col items-center gap-8 min-h-[80vh] justify-center z-20 relative">
+  <a href="/reviews">
+    <div class="group rounded-full border border-green-500/15 bg-green-500/10 text-sm shadow-lg backdrop-blur-lg transition-all ease-in hover:cursor-pointer">
+      <p class="mx-auto max-w-md text-green-600/70 dark:text-green-400/70 animate-shiny-text bg-clip-text bg-no-repeat [background-position:0_0] [background-size:var(--shiny-width)_100%] [transition:background-position_1s_cubic-bezier(.6,.6,0,1)_infinite] bg-gradient-to-r from-transparent via-[--accent-color] to-transparent contrast-200 inline-flex items-center justify-center px-4 py-1 transition ease-out hover:text-green-600 hover:duration-300 hover:dark:text-green-400" style="--shiny-width: 100px;">
+        <span class="flex flex-row items-center gap-1">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 100 100"
+            fill="currentColor">
+            <path d="m50.027 10.459-.018-.032-33.606 19.404.076.132v22.893h.014c.286 19.111 14.859 34.755 33.519 36.718 18.66-1.962 33.234-17.606 33.519-36.718V29.953l.066-.114zm-.015 69.097V51.677H26.435V35.651L50.012 22.04v29.637h23.563v1.179h.017c-.278 13.593-10.439 24.798-23.58 26.7" />
+          </svg>
+          Trusted by customers with an average rating of {{ averageRating | 5 }}
+        </span>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-arrow-right size-3 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5">
+          <path d="M5 12h14" />
+          <path d="m12 5 7 7-7 7" />
+        </svg>
+      </p>
+    </div>
+  </a>
+
+  <h1 class="bg-gradient-to-bl from-white to-[--accent-color] bg-clip-text text-center text-5xl/[1.07] font-semibold tracking-tight text-transparent md:text-7xl/[1.07] lg:text-8xl/[1.1]" style="opacity: 1; filter: blur(0px); transform: none;">Xenith Hub<br>Premium Key</h1>
+
+  <p class="max-w-xl px-10 text-center text-sm text-muted-foreground opacity-50 sm:px-0 sm:text-lg" style="opacity: 1; filter: blur(0px); transform: none;">
+    Elevate your experience with our premium products, designed to enhance performance and help you excel in every challenge.</p>
+
+  <slot data-id="f4ebf40c-22d9-424c-8f53-1f345e7a2f0f" class="min-h-[20px]">
+    <link-button
+      href="/#products-list"
+      class="mt-6 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 text-primary-foreground dark:text-accent-foreground shadow hover:bg-[--accent-color]/90 px-4 py-2 h-10 bg-gradient-to-tr from-[--accent-color] via-[--dark-accent-color] to-[--medium-accent-color] text-base font-medium duration-200 hover:opacity-80"
+      data-id="b782100d-cb9a-4697-ad14-eaeca69760f7"
+      data-label="Browse products!"
+      data-variant="default"
+      data-href="https://sellhub.cx">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-box">
+        <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
+        <path d="m3.3 7 8.7 5 8.7-5" />
+        <path d="M12 22V12" />
+      </svg>
+      <span>Browse products!</span>
+    </link-button>
+  </slot>
+</div>
+
+<div class="absolute w-full min-h-[80vh] -top-28 z-10 overflow-hidden 
+[mask-image:radial-gradient(ellipse_at_100%_0%,_black_40%,_transparent_70%)]
+bg-no-repeat bg-[length:300%,200%] bg-[position:50%_50%,50%_50%]
+[background-image:repeating-linear-gradient(100deg,_black_0%,_black_7%,_transparent_10%,_transparent_12%,_black_16%),_repeating-linear-gradient(100deg,_#60a5fa_10%,_#e879f9_15%,_#60a5fa_20%,_#5eead4_25%,_#60a5fa_30%)]
+[filter:blur(20px)_opacity(20%)_saturate(250%)]">
+  <!-- The “animation layer” absolutely positioned to create the moving effect -->
+  <div class="absolute inset-0 bg-no-repeat bg-[length:200%,100%]
+  [background-image:repeating-linear-gradient(100deg,_black_0%,_black_7%,_transparent_10%,_transparent_12%,_black_16%),_repeating-linear-gradient(100deg,_#60a5fa_10%,_#e879f9_15%,_#60a5fa_20%,_#5eead4_25%,_#60a5fa_30%)]
+  mix-blend-difference
+  animate-ray">
+</div>
+</div>

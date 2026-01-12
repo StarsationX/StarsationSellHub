@@ -1,0 +1,20 @@
+<div className="w-full h-full flex flex-col items-center justify-center min-h-[calc(100svh-420px)]">
+  <div class="rounded-xl border bg-card text-card-foreground shadow">
+      <div class="flex flex-col space-y-1.5 p-6">
+          <h3 class="font-semibold leading-none tracking-tight">Verify on {{ store.name }}'s discord server</h3>
+          <p class="text-sm text-muted-foreground">To view the rest of the discord server.</p>
+      </div>
+
+      <div class="p-6 pt-0 flex flex-col items-center justify-center gap-4">
+          <fade-in-image width="256" height="256" alt="Logo"
+              class="max-h-36 object-center object-cover max-w-full rounded-xl" src="{{ store.image }}" ></fade-in-image>
+              <server-form class="w-full" action-name="setStoreCookie">
+          <custom-optimistic-button type="submit" data-href=""
+              class="w-full bg-[--accent-color] hover:bg-[--dark-accent-color]"
+              >
+              <span>Verify</span>
+          </custom-optimistic-button>
+          </server-form>
+      </div>
+  </div>
+</div>

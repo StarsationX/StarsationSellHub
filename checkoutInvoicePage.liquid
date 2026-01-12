@@ -1,0 +1,461 @@
+<div>
+  <!-- Invoice Details -->
+  <div class="md:ml-10 lg:ml-16 md:max-w-xl py-6 md:py-14 flex flex-col gap-4">
+    <!-- Invoice Number and time -->
+    <div class="flex flex-row items-start justify-between gap-4">
+      <div class="flex flex-col gap-2 items-start">
+        <span class="text-xs text-muted-foreground/70">Invoice ID</span>
+        <span class="font-semibold text-sm sm:text-xl text-[--accent-color]">{{ invoiceDetails.id }}</span>
+      </div>
+      <div class="flex flex-col gap-2 items-end">
+        <span class="text-xs text-muted-foreground/70">Amount</span>
+        <span class="font-semibold text-sm sm:text-xl text-white min-w-max">
+          {% if invoiceDetails.methodId == 'paypalF&F' or invoiceDetails.methodId == 'paypalIPN' %}
+            <span>{{ invoiceDetails.notePaymentMethodTotalInCurrency }}</span>
+          {% else %}
+            <price data-currency="usd" data-price="{{ invoiceDetails.totalInUsd }}"> </price>
+          {% endif %}
+        </span>
+      </div>
+    </div>
+    <!-- Invoice Seprator -->
+    <div class="w-full h-[1px] bg-accent"></div>
+    <!-- Invoice Details -->
+    <div class="flex flex-col gap-2">
+      <div class="min-h-[28px] flex flex-row gap-4 justify-between items-center">
+        <span class="text-xs text-muted-foreground/70">Store</span>
+        <span class="text-xs">{{ name }}</span>
+      </div>
+      <div class="min-h-[28px] flex flex-row gap-4 justify-between items-center">
+        <span class="text-xs text-muted-foreground/70">Your Email</span>
+        <span class="font-normal text-xs text-muted-foreground">{{ invoiceDetails.customer.email }}</span>
+      </div>
+      <div class="min-h-[28px] flex flex-row gap-4 justify-between items-center">
+        <span class="text-xs text-muted-foreground/70">Payment Method</span>
+        <span
+          class="font-normal text-[10px] text-[--accent-color] px-2 py-1 rounded-md bg-[--light-accent-color] capitalize"
+        >
+          {{- invoiceDetails.paymentMethod -}}
+        </span>
+      </div>
+      <div class="min-h-[28px] flex flex-row gap-4 justify-between items-center">
+        <span class="text-xs text-muted-foreground/70">Invoice Created At</span>
+        <span class="text-xs text-muted-foreground/70 uppercase">
+          {{- invoiceDetails.createdAt | date: '%Y-%m-%d
+            %I:%M %P' -}}
+        </span>
+      </div>
+      {% if invoiceDetails.methodId != 'paypalF&F'
+        and invoiceDetails.methodId != 'paypalIPN'
+        and invoiceDetails.paymentMethod != 'Cash App'
+      %}
+        <div class="min-h-[28px] flex flex-row gap-4 justify-between items-center">
+          <span class="text-xs text-muted-foreground/70">Invoice Status</span>
+          <div class="flex gap-3">
+            <span
+              class="font-normal text-xs px-2 py-1 rounded-md {% if invoiceDetails.status == 'completed' %} text-green-500 bg-green-500/15 {% elsif invoiceDetails.status == 'pending' %} text-orange-500 bg-orange-500/15 {% elsif invoiceDetails.status == 'expired' %} text-white bg-white/15  {% else %} text-red-500 bg-red-500/15 {% endif %} capitalize"
+            >
+              {{- invoiceDetails.status -}}
+            </span>
+            {% if invoiceDetails.methodId == 'cryptoCurrency' %}
+              <div
+                id="button-paid"
+                class="cursor-pointer py-1 px-2 text-xs font-semibold rounded-md text-green-500 bg-green-500/15 hover:bg-green-500/30 text-center"
+              >
+                MARK AS PAID
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+    <!--
+      {% if invoiceDetails.status == "pending" %}
+      <div class="flex gap-4">
+        <div class="mt-4 text-sm text-orange-500 bg-orange-500/10 p-4 rounded-lg">If you have sent the payment then your payment is currently being processed. Please wait a moment while we finalize your order. You will be automatically redirected to the order page once the process is complete.</div>
+      </div>
+      {% endif %}
+    -->
+
+    <!-- Invoice Payment Details Paypal -->
+    {% if invoiceDetails.paymentInstructions %}
+      <div class="flex flex-col gap-2 text-sm font-semibold mt-2">
+        <span class="text-lg">Payment instructions: </span>
+        <div
+          class="flex rounded-md font-medium bg-accent/30 p-2 whitespace-pre-wrap overflow-x-scroll [&>div]:w-full"
+        >
+          <format-markdown content="{{ invoiceDetails.paymentInstructions | escape }}"></format-markdown>
+        </div>
+      </div>
+    {% endif %}
+
+    <div>
+      {% if invoiceDetails.methodId == 'paypalF&F' or invoiceDetails.methodId == 'paypalIPN' %}
+        <div id="payment-confirmation-section-paypal" class="mt-4 bg-accent/30 rounded-lg flex flex-col">
+          <div class="p-4 border-b flex flex-row items-center justify-between">
+            <div class="font-semibold text-sm">Pay With Email</div>
+            <div class="flex gap-3">
+              <span
+                class="flex text-[10px] items-center uppercase px-2 py-1 rounded-md {% if invoiceDetails.status == 'completed' %} text-green-500 bg-green-500/15 {% elsif invoiceDetails.status == 'pending' %} text-orange-500 bg-orange-500/15 {% elsif invoiceDetails.status == 'expired' %} text-white bg-white/15  {% else %} text-red-500 bg-red-500/15 {% endif %}"
+              >
+                {{- invoiceDetails.status -}}
+              </span>
+              <div
+                id="button-paid"
+                class="cursor-pointer text-[10px] py-1 px-2 font-semibold rounded-md text-green-500 bg-green-500/15 hover:bg-green-500/30 text-center duration-200"
+              >
+                MARK AS PAID
+              </div>
+            </div>
+          </div>
+          <div class="p-4 flex flex-col gap-3">
+            <div class="text-sm text-muted-foreground/70">
+              To complete your invoice payment pay the invoice amount at the given email address.
+            </div>
+            <span class="flex flex-col sm:flex-row sm:items-center gap-2 text-sm font-semibold">
+              <span span>Amount To Send: </span>
+              <span class="font-medium py-1 px-2 rounded-md bg-[--light-accent-color] text-[--accent-color]">
+                {{- invoiceDetails.notePaymentMethodTotalInCurrency -}}
+              </span>
+            </span>
+            <span class="flex flex-col sm:flex-row sm:items-center gap-2 text-sm font-semibold">
+              <span>Email To Send Payment: </span>
+              <span class="font-medium py-1 px-2 rounded-md bg-[--light-accent-color] text-[--accent-color]">
+                {{- invoiceDetails.emailOrCashTag -}}
+              </span>
+            </span>
+            <span class="flex flex-col sm:flex-row sm:items-center gap-2 text-sm font-semibold">
+              {% if invoiceDetails.paymentTransactionId %}
+                <span>Note To Write: </span>
+
+                <span class="font-medium py-1 px-2 rounded-md bg-[--light-accent-color] text-[--accent-color]">
+                  {{- invoiceDetails.paymentTransactionId -}}
+                </span>
+              {% else %}
+                <span class="text-red-500/80">DO NOT ADD A NOTE TO THIS PAYMENT! </span>
+              {% endif %}
+            </span>
+            <div class="text-xs text-red-500/80">
+              Note: Make sure to send exact amount to this exact email as
+              {% if invoiceDetails.paypalMethods contains 'friendsAndFamily'
+                and invoiceDetails.paypalMethods contains 'goodsAndServices'
+              %}
+                'Friends and Family' or 'Goods and Services'
+              {% elsif invoiceDetails.paypalMethods contains 'friendsAndFamily' -%}
+                'Friends and Family'
+              {%- elsif invoiceDetails.paypalMethods contains 'goodsAndServices' -%}
+                'Goods and services'
+              {%- endif %}
+              {% if invoiceDetails.paymentTransactionId %} with the exact note to avoid any money losses.{% endif %}
+            </div>
+          </div>
+        </div>
+      {% elsif invoiceDetails.paymentMethod == 'Cash App' %}
+        <div id="payment-confirmation-section-cashapp" class="mt-4 bg-accent/30 rounded-lg flex flex-col">
+          <div class="p-4 border-b flex flex-row items-center justify-between">
+            <div class="font-semibold text-sm">Pay With CashApp</div>
+            <div class="flex gap-3">
+              <span
+                class="uppercase px-2 py-1 rounded-md {% if invoiceDetails.status == 'completed' %} text-green-500 bg-green-500/15 {% elsif invoiceDetails.status == 'pending' %} text-orange-500 bg-orange-500/15 {% elsif invoiceDetails.status == 'expired' %} text-white bg-white/15  {% else %} text-red-500 bg-red-500/15 {% endif %} text-[10px]"
+              >
+                {{- invoiceDetails.status -}}
+              </span>
+              <div
+                id="button-paid"
+                class="cursor-pointer py-1 px-2 text-[10px] font-semibold rounded-md text-green-500 bg-green-500/15 hover:bg-green-500/30 text-center duration-200"
+              >
+                MARK AS PAID
+              </div>
+            </div>
+          </div>
+          <div class="p-4 flex flex-col gap-3">
+            <div class="text-sm text-muted-foreground/70">
+              To complete your invoice payment pay the invoice amount at the given email address.
+            </div>
+            <span class="flex flex-col sm:flex-row sm:items-center gap-2 text-sm font-semibold">
+              <span span>Amount To Send: </span>
+              <span class="font-medium py-1 px-2 rounded-md bg-[--light-accent-color] text-[--accent-color]">
+                {{- invoiceDetails.notePaymentMethodTotalInCurrency -}}
+              </span>
+            </span>
+            <span class="flex flex-col sm:flex-row sm:items-center gap-2 text-sm font-semibold">
+              <span>CashTag To Send Payment: </span>
+              <span class="font-medium py-1 px-2 rounded-md bg-[--light-accent-color] text-[--accent-color]"
+                >${{ invoiceDetails.emailOrCashTag -}}
+              </span>
+            </span>
+
+            <span class="flex flex-col sm:flex-row sm:items-center gap-2 text-sm font-semibold">
+              {% if invoiceDetails.paymentTransactionId %}
+                <span>Note To Write: </span>
+
+                <span class="font-medium py-1 px-2 rounded-md bg-[--light-accent-color] text-[--accent-color]">
+                  {{- invoiceDetails.paymentTransactionId -}}
+                </span>
+              {% else %}
+                <span class="text-red-500/80">DO NOT ADD A NOTE TO THIS PAYMENT! </span>
+              {% endif %}
+            </span>
+            <div class="text-xs text-red-500/80">
+              Note: Make sure to send exact amount to this exact cashtag
+              {% if invoiceDetails.paymentTransactionId %}
+                with the exact note to avoid any money losses.
+              {%- endif %}
+            </div>
+          </div>
+        </div>
+      {% elsif invoiceDetails.paymentMethod == 'Crypto' %}
+        <accordion id="payment-confirmation-section-crypto" class="mt-4 flex flex-col gap-2">
+          {% for address in invoiceDetails.cryptoAddresses %}
+            <accordion-item value="{{ address.id }}" class="bg-accent/30 rounded-lg flex flex-col">
+              <accordion-trigger class="p-4 flex flex-row items-center justify-between">
+                <div class="text-sm flex flex-row gap-4">
+                  <payment-method-icon
+                    class="h-5 w-5 rounded-md bg-accent/40"
+                    data-payment-method="{{ address.crypto }}"
+                  ></payment-method-icon>
+                  <span class="text-white flex flex-row items-center"
+                    >Pay With
+                    <span
+                      class="uppercase font-medium mx-1"
+                    >
+                      {{- address.crypto -}}
+                    </span></span
+                  >
+                </div>
+              </accordion-trigger>
+              <accordion-content class="p-4 flex flex-col gap-4 border-t">
+                <!-- Crypto Address with logo and invoice id -->
+                <div class="flex flex-row items-center justify-between">
+                  <div class="flex flex-row gap-2">
+                    <payment-method-icon
+                      class="h-10 w-10 rounded-md"
+                      data-payment-method="{{ address.crypto }}"
+                    ></payment-method-icon>
+                    <div class="flex flex-col gap-1">
+                      <span class="uppercase">{{ address.crypto }}</span>
+                      <span class="text-xs text-muted-foreground/60">{{ address.invoiceId }}</span>
+                    </div>
+                  </div>
+                </div>
+                <!-- Crypto Address Payment information -->
+                <div class="flex flex-col gap-2">
+                  {% if invoiceDetails.underpayment.paidCurrency == address.crypto %}
+                    <div class="mt-4 text-sm text-red-500 bg-red-500/10 p-4 rounded-lg">
+                      You have underpaid this invoice!<br>
+                      You sent {{ invoiceDetails.underpayment.sentAmount }}
+                      {{ invoiceDetails.underpayment.paidCurrency | upcase }}.<br>
+                      You still have to send {{ address.amount | minus: invoiceDetails.underpayment.sentAmount }}
+                      {{ invoiceDetails.underpayment.paidCurrency | upcase }}.
+                    </div>
+                  {% endif %}
+                  <span class="min-h-[24px] flex flex-row justify-between gap-4 text-sm">
+                    <span class="text-muted-foreground/80">Total: </span>
+                    <span class="text-sm text-white">{{ invoiceDetails.totalInCurrency }}</span>
+                  </span>
+                  <span class="min-h-[24px] flex flex-row justify-between gap-4 text-sm">
+                    <span class="text-muted-foreground/80">Exchange Rate: </span>
+                    <span class="text-sm text-muted-foreground">{{ address.rateText }}</span>
+                  </span>
+                  <span class="min-h-[24px] flex flex-row justify-between gap-4 text-sm">
+                    <span class="text-muted-foreground/80">Invoice Created At: </span>
+                    <span class="text-sm text-muted-foreground">
+                      {{- invoiceDetails.createdAt | date: '%Y-%m-%d %I:%M
+                    %P' -}}
+                    </span>
+                  </span>
+                  <span class="min-h-[24px] flex flex-row justify-between gap-4 text-sm">
+                    <span class="text-muted-foreground/80">Amount To Send: </span>
+                    <span
+                      class="text-xs font-medium py-1 px-2 rounded-md bg-[--light-accent-color] text-[--accent-color]"
+                    >
+                      {{- address.amount }}
+                      <span class="text-xs ml-1 font-medium uppercase">{{ address.crypto }}</span></span
+                    >
+                  </span>
+                  <!-- Crypto Address COPY FIELDS -->
+                  <copy-clipboard-div data-clipboard-text="{{ address.address }}">
+                    <div
+                      class="flex flex-col p-2 gap-1 bg-[--light-accent-color] rounded-md cursor-pointer group relative"
+                    >
+                      <span
+                        class="text-[10px] px-2 rounded-md group-hover:flex absolute hidden top-2 right-2 z-10 bg-white text-black"
+                        >COPY</span
+                      >
+                      <span class="text-xs text-[--accent-color]">Crypto Address</span>
+                      <span class="font-light text-white break-words">{{ address.address }}</span>
+                    </div>
+                  </copy-clipboard-div>
+                  <copy-clipboard-div data-clipboard-text="{{ address.amount }}">
+                    <div
+                      class="flex flex-col p-2 gap-1 bg-[--light-accent-color] rounded-md cursor-pointer group relative"
+                    >
+                      <span
+                        class="text-[10px] px-2 rounded-md group-hover:flex absolute hidden top-2 right-2 z-10 bg-white text-black"
+                        >COPY</span
+                      >
+                      <span class="text-xs text-[--accent-color]">Amount To Send</span>
+                      <span class="font-light text-white break-words">{{ address.amount }}</span>
+                    </div>
+                  </copy-clipboard-div>
+                  <!-- Crypto Address QR Code -->
+                  <div
+                    class="mt-2 flex flex-col items-center sm:flex-row gap-4 p-4 border rounded-md border-border/50 "
+                  >
+                    <div
+                      class="bg-white rounded-md h-[200px] w-[200px] shrink-0 p-4 flex items-center justify-center"
+                    >
+                      <generate-qrcode size="184" uri="{{ address.paymentUrl }}"></generate-qrcode>
+                    </div>
+                    <div class="text-sm font-light text-muted-foreground/80 flex flex-col gap-2 w-full">
+                      <span> Scan the QR Code with your preferred cryptocurrency app to send the payment. </span>
+                      <span
+                        >You must send the
+                        <span
+                          class="text-xs uppercase py-1 px-2 rounded-md bg-[--light-accent-color] text-[--accent-color]"
+                        >
+                          {{- address.crypto -}}
+                        </span>
+                        crypto coin only. Transactions sent with other coin on above address wont be considered and will
+                        result in a loss of crypto.</span
+                      >
+                      <span>Make sure to send the exact amount to the exact address to avoid any money losses.</span>
+                      <span>You can copy your details from above.</span>
+                    </div>
+                  </div>
+                </div>
+              </accordion-content>
+            </accordion-item>
+          {% endfor %}
+        </accordion>
+      {% endif %}
+    </div>
+
+    <!-- timer block -->
+    <div id="timer-block" class="mt-8 flex flex-col items-center hidden">
+      <div class="text-sm text-orange-500 bg-orange-500/10 p-4 rounded-lg">
+        Your payment is currently being processed. Please wait a moment while we finalize your order. You will be
+        automatically redirected to the order page once the process is complete.
+      </div>
+      <p class="mt-4 text-center text-lg font medium">Please wait while we process your order</p>
+      <img src="/images/loading.svg" class="w-[120px] h-[120px]" width="24" height="24">
+      <div
+        id="countdown-timer"
+        class="text-xl md:text-2xl text-[--accent-color] rounded-full flex items-center justify-center"
+      >
+        05:00
+      </div>
+      <p class="mt-4 text-gray-300/40 text-center text-base max-w-[400px]">
+        You will be redirected to your order page after we confirm your payment
+      </p>
+    </div>
+  </div>
+
+  <!-- Script -->
+  <script key="invoice-script">
+    // share feature
+    if (typeof invoiceDetails === 'undefined') {
+      try {
+        let invoiceDetails = JSON.parse('{{ invoiceDetails | json }}');
+        let prod = invoiceDetails.invoiceItems[0].productVariant.product.name;
+
+        let prodUrl = window.location.origin + '/product/' + prod;
+
+        const facebookShareLink = document.querySelector('#share-facebook');
+        const twitterShareLink = document.querySelector('#share-twitter');
+
+        if(facebookShareLink)
+        {
+        facebookShareLink.href = "https://www.facebook.com/sharer/sharer.php?u=" + prodUrl;
+            }
+        const twitterText = "Checkout " + prod + " at:"
+
+        if(twitterShareLink)
+        {
+        twitterShareLink.href = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(twitterText) + "&url=" + prodUrl;
+            }
+
+        // countdown timer function
+        var timerStarted = false;
+
+        function startTimer(duration, display) {
+          timerStarted = true;
+          var timer = duration,
+            minutes,
+            seconds;
+          setInterval(function () {
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+
+            display.textContent = minutes + ':' + seconds;
+
+            if (--timer < 0) {
+              timer = 0;
+            }
+          }, 1000);
+        }
+
+        // payment confirmation section
+        const paymentConfirmationSectionPaypal = document.querySelector('#payment-confirmation-section-paypal');
+        const paymentConfirmationSectionCashapp = document.querySelector('#payment-confirmation-section-cashapp');
+        const paymentConfirmationSectionCrypto = document.querySelector('#payment-confirmation-section-crypto');
+        const paymentConfirmationSectionCard = document.querySelector('#payment-confirmation-section-card');
+
+        // const headerInfoText = document.querySelector('#header-info-text');
+        const countdownTimer = document.querySelector('#countdown-timer');
+        const shareSection = document.querySelector('#share-section');
+        const shareSectionLabel = document.querySelector('#share-section-label');
+        const timerBlock = document.querySelector('#timer-block');
+
+        const buttonPaid = document.querySelector('#button-paid');
+
+        if (buttonPaid) {
+          buttonPaid.addEventListener('click', () => {
+            var fiveMinutes = 60 * 5;
+            var display = document.querySelector('#countdown-timer');
+            if (!timerStarted && display.textContent == '05:00') {
+              startTimer(fiveMinutes, display);
+            }
+
+            buttonPaid.classList.add('hidden');
+
+            // headerInfoText.textContent = 'PLEASE WAIT WHILE WE PROCESS YOUR ORDER';
+            timerBlock.classList.remove('hidden');
+            shareSection.classList.remove('hidden');
+            shareSectionLabel.classList.remove('hidden');
+
+            paymentConfirmationSectionPaypal?.classList.add('hidden');
+            paymentConfirmationSectionCashapp?.classList.add('hidden');
+            paymentConfirmationSectionCrypto?.classList.add('hidden');
+          });
+        }
+
+        // If the page has param 'paid' marked as true, directly show paid status of page
+        if (new URLSearchParams(window.location.search).get('paid') == 'true') {
+          var fiveMinutes = 60 * 5;
+          var display = document.querySelector('#countdown-timer');
+          if (!timerStarted && display.textContent == '05:00') {
+            startTimer(fiveMinutes, display);
+          }
+
+          if (buttonPaid) {
+            buttonPaid.classList.add('hidden');
+          }
+          // headerInfoText.textContent = 'PLEASE WAIT WHILE WE PROCESS YOUR ORDER';
+          timerBlock.classList.remove('hidden');
+          shareSection.classList.remove('hidden');
+          shareSectionLabel.classList.remove('hidden');
+
+          paymentConfirmationSectionPaypal?.classList.add('hidden');
+          paymentConfirmationSectionCashapp?.classList.add('hidden');
+          paymentConfirmationSectionCrypto?.classList.add('hidden');
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  </script>
+</div>

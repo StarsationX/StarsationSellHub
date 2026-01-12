@@ -1,0 +1,408 @@
+<div class="bg-cover bg-center mx-auto w-full max-w-[1400px] px-4 !scroll-smooth">
+  {% if sale %}
+    <slot data-id="1" class="min-h-[100px]">
+      <vertical-layout
+        data-id="2a4a9a67-7276-4e3b-a150-1a03ab0fceed"
+        data-slots="5"
+        style="gap: 24px; align-items: center; justify-content: start"
+        data-spacing="36"
+        data-align-items="center"
+        data-justify-items="start"
+      >
+        <div class="mt-4 flex flex-col md:flex-row gap-4 min-h-[calc(100svh-380px-70px-50px)] w-full">
+          <div class="w-full md:w-2/3 flex flex-col gap-4">
+            <div class="flex flex-row items-center justify-between">
+              <div class="font-semibold text-lg">Order</div>
+            </div>
+            <!-- Invoice Section -->
+            <div class="bg-accent/30 p-4 rounded-lg">
+              <!-- Invoice Number and time -->
+              <div class="flex flex-row items-start justify-between">
+                <div class="flex flex-col gap-2 items-start">
+                  <span class="text-xs text-muted-foreground/70">Order ID</span>
+                  <span class="font-semibold text-sm sm:text-xl text-[--accent-color]">{{ sale.id }}</span>
+                </div>
+                <div class="flex flex-col gap-2 items-end">
+                  <span class="font-medium text-sm px-2 py-1 rounded-md {% if sale.status == 'completed' %} text-green-500 bg-green-500/15 {% else %} text-[--accent-color] bg-[--light-accent-color] {% endif %}  capitalize">
+                    {{- sale.status -}}
+                  </span>
+                </div>
+              </div>
+              <!-- Invoice Seprator -->
+              <div class="w-full h-[1px] bg-accent my-4"></div>
+              <!-- Invoice Details -->
+              <div class="flex flex-col gap-2">
+                <div class="min-h-[28px] flex flex-row gap-4 justify-between items-center">
+                  <span class="text-xs text-muted-foreground/70">Store</span>
+                  <span class="text-sm">{{ name }}</span>
+                </div>
+                <div class="min-h-[28px] flex flex-row gap-4 justify-between items-center">
+                  <span class="text-xs text-muted-foreground/70">Your Email</span>
+                  <span class="text-sm text-muted-foreground">{{ sale.customer.email }}</span>
+                </div>
+                <div class="min-h-[28px] flex flex-row gap-4 justify-between items-center">
+                  <span class="text-xs text-muted-foreground/70">Payment Method</span>
+                  <span
+                    class="font-medium text-xs text-[--accent-color] px-2 py-1 rounded-md bg-[--light-accent-color] capitalize"
+                  >
+                    {{- sale.paymentMethod -}}
+                  </span>
+                </div>
+                <div class="min-h-[28px] flex flex-row gap-4 justify-between items-center">
+                  <span class="text-xs text-muted-foreground/70">Order Amount</span>
+                  <span class="text-sm">${{ sale.totalInUsd }}</span>
+                </div>
+                <div class="min-h-[28px] flex flex-row gap-4 justify-between items-center">
+                  <span class="text-xs text-muted-foreground/70">Order Created At</span>
+                  <span
+                    class="text-sm text-muted-foreground uppercase"
+                  >
+                    {{- sale.createdAt | date: '%Y-%m-%d %I:%M %P' -}}
+                  </span>
+                </div>
+                <div class="min-h-[28px] flex flex-row gap-4 justify-between items-center">
+                  <span class="text-xs text-muted-foreground/70">Feedback Given</span>
+                  <span class="text-sm">
+                    {% if sale.leftFeedback %}
+                      <span class="text-xs uppercase px-2 py-1 rounded-md bg-green-500/15 text-green-500">Yes</span>
+                    {% else %}
+                      <span class="text-xs uppercase px-2 py-1 rounded-md bg-red-500/15 text-red-500">No</span>
+                    {% endif %}
+                  </span>
+                </div>
+                {% if sale.paymentTransactionId %}
+                  <div class="min-h-[28px] flex flex-row gap-4 justify-between items-center">
+                    <span class="text-xs text-muted-foreground/70">Order Note</span>
+                    <span
+                      class="text-sm text-[--accent-color] px-2 py-1 rounded-md bg-[--light-accent-color]"
+                    >
+                      {{- sale.paymentTransactionId | default: '---' -}}
+                    </span>
+                  </div>
+                {% endif %}
+                <!-- Order Keys Delivered -->
+                <div class="mt-4 font-semibold text-sm">Delivered Goods</div>
+                {% assign items = sale.invoiceItems %}
+                {% for item in items %}
+                  <div class="bg-background rounded-lg flex flex-col">
+                    <div class="p-4 border-b flex flex-col sm:flex-row sm:items-center justify-between">
+                      <div class="text-sm flex flex-col">
+                        <span
+                          class="text-white font-medium"
+                        >
+                          {{- item.productVariant.product.name -}}</span
+                        ><span
+                          class="text-xs text-muted-foreground/80"
+                        >
+                          {{- item.productVariant.name -}}
+                        </span>
+                      </div>
+
+                      <div class="flex flex-row items-center gap-2">
+                        <save-as-file-div
+                          data-filename="{{ item.productVariant.product.name }}-{{ item.productVariant.name }}"
+                          data-keys="{% for key in item.activationKey %}{{ key.key | append: '\n' }}{% endfor %}"
+                          class="uppercase px-2 py-1 rounded-md text-white/90 bg-white/15 hover:bg-white/25 duration-200 text-xs cursor-pointer min-w-max"
+                          >Save File</save-as-file-div
+                        >
+                        <copy-clipboard-div
+                          data-clipboard-text="{% for key in item.activationKey %}{{ key.key }}{% endfor %}"
+                          class="uppercase px-2 py-1 rounded-md text-white/90 bg-white/15 hover:bg-white/25 duration-200 text-xs cursor-pointer min-w-max"
+                          >Copy All</copy-clipboard-div
+                        >
+                      </div>
+                    </div>
+                    <div class="p-4 flex flex-col gap-1">
+                      <!-- vairant note -->
+                      {% if item.productVariant.note != '' %}
+                        <div class="flex flex-col gap-1 p-2 rounded-md bg-accent/30">
+                          <div class="text-[10px] text-muted-foreground/70">Variant Note:</div>
+                          <div class="flex whitespace-pre-wrap overflow-x-scroll [&>div]:w-full">
+                            <format-markdown content="{{ item.productVariant.note | escape }}"></format-markdown>
+                          </div>
+                        </div>
+                      {% endif %}
+                      <!-- variant keys -->
+                      <div class="flex flex-col mt-4 gap-1">
+                        {% for key in item.activationKey %}
+                          <div class="text-xs">{{ key.key }}</div>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+          <!-- Payment Section -->
+          <div class="w-full md:w-1/3 flex flex-col gap-4 h-fit md:sticky md:top-20">
+            <div class="font-semibold text-lg">Feedback</div>
+            <div class="w-full flex flex-col gap-4">
+              <server-form action-name="publishReview" class="w-full">
+                <!-- Hidden inputs for star rating , feedback and order id -->
+                <input type="hidden" name="stars" value="0">
+                <input type="hidden" name="invoiceId" value="{{ sale.id }}">
+                <input type="hidden" name="invoiceItems" value="{{ sale.invoiceItems | json | escape }}">
+                <div class="bg-accent/30 p-4 gap-2 rounded-lg flex flex-col">
+                  {% if sale.reviewReward %}
+                    <div class="flex flex-col p-3 rounded-md bg-[--light-accent-color] text-[--accent-color]">
+                      <div class="text-sm font-semibold bg-[--accent-color] text-transparent bg-clip-text">
+                        ⭐️ Reward ⭐️
+                      </div>
+                      <div class="text-xs mt-1">
+                        {% if sale.leftFeedback %}
+                          <span>
+                            Rewards are available for new reviews, so we’d love to hear your thoughts on any future
+                            purchases. We truly appreciate your support!
+                          </span>
+                        {% else %}
+                          <div>
+                            <span>
+                              {% if sale.reviewReward.rewardType == 'fixed' %}
+                                You will get ${{ sale.reviewReward.rewardAmount }} in your customer balance for leaving
+                                a review.
+                              {% else %}
+                                You will get {{ sale.reviewReward.rewardAmount }}% of your invoice amount as a reward in
+                                your customer balance for leaving a review.
+                              {% endif %}
+                            </span>
+                            <div class="text-xs mt-2">
+                              <strong>Requirement:</strong>
+                              <span>
+                                Given rating must be greater than or equal to
+                                <strong>{{ sale.reviewReward.ratingRequirement }}</strong>
+                              </span>
+                            </div>
+                          </div>
+                        {% endif %}
+                      </div>
+                    </div>
+                  {% endif %}
+                  <span class="text-xs">Rating</span>
+                  <div class="flex flex-row gap-2 bg-background p-4 rounded-lg">
+                    <ul class="flex flex-row gap-2 text-white/20">
+                      {% for i in (1..5) %}
+                        <li data-value="{{ i }}" class="star  cursor-pointer hover:scale-110 duration-300">
+                          <svg width="24" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path fill="currentColor"
+                              d="m11.443 19.478-4.328 2.378c-.584.321-1.307.086-1.615-.524a1.3 1.3 0 0 1-.12-.793l.827-5.037a1.29 1.29 0 0 0-.344-1.106L2.36 10.83a1.29 1.29 0 0 1-.021-1.767c.183-.197.424-.325.684-.364l4.839-.735c.39-.06.726-.315.9-.684l2.165-4.582c.292-.619 1.009-.873 1.601-.568.236.122.427.321.543.568l2.164 4.582c.175.369.511.625.901.684l4.839.735c.654.099 1.106.733 1.011 1.416a1.27 1.27 0 0 1-.348.715l-3.502 3.567c-.282.287-.41.7-.344 1.106l.827 5.037c.112.68-.326 1.326-.977 1.443a1.15 1.15 0 0 1-.758-.126l-4.328-2.378a1.15 1.15 0 0 0-1.114 0" />
+                          </svg>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                  <span class="text-xs">How was your experience with us?</span>
+                  <textarea
+                    name="review"
+                    required
+                    class="w-full h-24 p-4 rounded-lg resize-none outline-none placeholder:text-muted-foreground placeholder:text-sm bg-background"
+                    placeholder="Write your feedback here"
+                  ></textarea>
+                  <custom-optimistic-button
+                    type="submit"
+                    class="w-full space-x-2 bg-[--accent-color] hover:bg-[--dark-accent-color] mt-2"
+                    variant="outline"
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      data-name="Flat Line"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path d="M5 12h14m-7-7v14"
+                        style="fill:currentColor;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;stroke-width:2" />
+                    </svg>
+                    <span>Leave Feedback</span>
+                  </custom-optimistic-button>
+                  <dialog>
+                    <dialog-trigger>
+                      <div
+                        class="flex items-center justify-center bg-transparent hover:bg-[#262626] border w-full h-8 px-4 py-2 text-sm rounded-md font-medium"
+                      >
+                        Report Problem
+                      </div>
+                    </dialog-trigger>
+                    <dialog-content>
+                      <dialog-header-container>
+                        <dialog-header>
+                          <dialog-title>Report Problem</dialog-title>
+                          <dialog-description> Report a problem with this invoice. </dialog-description>
+                        </dialog-header>
+                      </dialog-header-container>
+                      <server-form action-name="createProductReport">
+                        <dialog-content-container>
+                          <div className="grid gap-4">
+                            <div class="flex flex-col gap-2">
+                              <div class="flex flex-col gap-2">
+                                <span class="text-sm text-muted-foreground">Invoice ID</span>
+                                <input name="invoiceId" value="{{sale.id}}" disabled>
+                              </div>
+                              <div class="flex flex-col gap-2">
+                                <span class="text-sm text-muted-foreground">Report Type</span>
+                                <select
+                                  name="reportType"
+                                  class="px-2 text-sm bg-transparent rounded-md border text-white h-8 w-full"
+                                  id="selectReportTypeField"
+                                >
+                                  <option value="refund">Request Refund</option>
+                                  <option value="fraudulent">Fraudulent</option>
+                                  <option value="not_received">Not Received</option>
+                                </select>
+                              </div>
+                              <div class="flex flex-col gap-2">
+                                <span class="text-sm text-muted-foreground">Reason</span>
+                                <textarea required name="reason" class="h-32 resize-none " />
+                              </div>
+                            </div>
+                          </div>
+                        </dialog-content-container>
+                        <dialog-footer>
+                          <dialog-close>
+                            <div class="flex items-center justify-center px-3 text-sm h-8 rounded-md bg-transparent border">
+                              Cancel
+                            </div>
+                          </dialog-close>
+                          <dialog-close>
+                            <custom-optimistic-button
+                              type="submit"
+                              class="h-8 bg-red-600 hover:bg-red-500 text-white rounded-md"
+                            >
+                              Report
+                            </custom-optimistic-button>
+                          </dialog-close>
+                        </dialog-footer>
+                      </server-form>
+                    </dialog-content>
+                  </dialog>
+                </div>
+              </server-form>
+            </div>
+            <div class="font-semibold text-lg">Connect Discord</div>
+            <server-form action-name="syncDiscordWithInvoice" class="w-full">
+              <input name="invoiceId" value="{{sale.id}}" disabled type="hidden">
+              <custom-optimistic-button
+                type="submit"
+                disabled="{% if sale.discordAccountId %}true{% else %}false{% endif %}"
+                class="w-full space-x-2 bg-[--accent-color] hover:bg-[--dark-accent-color]"
+                variant="outline"
+              >
+                <svg width="16" height="16" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                  <path fill="#fff" d="M20.992 20.163a2.884 2.884 0 0 1-2.695-3.03v.007a2.867 2.867 0 0 1 2.687-3.023h.008a2.85 2.85 0 0 1 2.695 3.031v-.008a2.86 2.86 0 0 1-2.688 3.022h-.008zm-9.966 0a2.884 2.884 0 0 1-2.695-3.03v.007a2.867 2.867 0 0 1 2.687-3.023h.008a2.85 2.85 0 0 1 2.695 3.031v-.008q.005.074.005.161a2.867 2.867 0 0 1-2.692 2.862zM26.393 6.465c-1.763-.832-3.811-1.49-5.955-1.871l-.149-.022-.017-.002a.09.09 0 0 0-.081.047c-.234.411-.488.924-.717 1.45l-.043.111a23 23 0 0 0-6.985.016l.129-.017c-.27-.63-.528-1.142-.813-1.638l.041.077a.1.1 0 0 0-.083-.047l-.016.001h.001a24.6 24.6 0 0 0-6.256 1.957l.151-.064a.1.1 0 0 0-.04.034C2.706 10.538.998 15.566.998 20.993q0 1.36.141 2.684l-.009-.11a.1.1 0 0 0 .039.07 24.6 24.6 0 0 0 7.313 3.738l.176.048a.1.1 0 0 0 .028.004q.05-.002.077-.038a17.5 17.5 0 0 0 1.485-2.392l.047-.1a.096.096 0 0 0-.052-.132h-.001a16 16 0 0 1-2.417-1.157l.077.042a.1.1 0 0 1-.048-.083c0-.031.015-.059.038-.076.157-.118.315-.24.465-.364a.1.1 0 0 1 .097-.013h-.001c2.208 1.061 4.8 1.681 7.536 1.681s5.329-.62 7.643-1.727l-.107.046a.1.1 0 0 1 .099.012q.226.188.466.365a.1.1 0 0 1 .038.077.1.1 0 0 1-.046.082c-.661.395-1.432.769-2.235 1.078l-.105.036a.1.1 0 0 0-.062.089q0 .024.011.044v-.001c.501.96 1.009 1.775 1.571 2.548l-.04-.057a.1.1 0 0 0 .106.036h-.001c2.865-.892 5.358-2.182 7.566-3.832l-.065.047a.1.1 0 0 0 .039-.069c.087-.784.136-1.694.136-2.615 0-5.415-1.712-10.43-4.623-14.534l.052.078a.1.1 0 0 0-.038-.036z"/>
+                </svg>
+                {% if sale.discordAccountId %}
+                  <span>Connected</span>
+                {% else %}
+                  <span>Connect</span>
+                {% endif %}
+              </custom-optimistic-button>
+            </server-form>
+            <div class="font-semibold text-lg">Ordered Items</div>
+            <div class="w-full flex flex-col gap-4">
+              <div class="gap-4 flex flex-col">
+                <!-- Cart Products List -->
+                {% for item in sale.invoiceItems %}
+                  <div class="bg-accent/30 p-4 rounded-lg flex flex-col gap-2">
+                    <div class="w-full flex flex-col sm:flex-row sm:items-center gap-3">
+                      <fade-in-image
+                        alt="product image"
+                        src="{{item.productVariant.product.images[0] | default: '/images/no_image_placeholder.png'}}"
+                        class="h-14 w-14 min-w-14 min-h-14 rounded-md object-cover shrink-0"
+                      >
+                      </fade-in-image>
+                      <div class="w-full flex flex-col sm:flex-row justify-between gap-2">
+                        <!-- Product Info -->
+                        <div class="flex flex-col justify-between gap-1 w-full">
+                          <div class="flex flex-col">
+                            <div class="text-sm font-medium line-clamp-1">{{ item.productVariant.product.name }}</div>
+                            <div class="text-xs text-muted-foreground/70 line-clamp-1">
+                              {{ item.productVariant.name }}
+                            </div>
+                          </div>
+                          <div class="flex flex-row items-center justify-between gap-2">
+                            <div class="text-sm font-medium text-[--accent-color]">
+                              ${{ item.price }}
+                              <span class="text-[10px] text-muted-foreground/70">x{{ item.quantity }} </span>
+                            </div>
+                            {% if item.warranty != false %}
+                              <div class="w-fit bg-green-500/20 text-green-500 rounded px-1 py-1 gap-1 text-[10px] flex items-center font-medium">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="12"
+                                  height="12"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  stroke-width="2"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  class="lucide lucide-shield"
+                                >
+                                  <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
+                                </svg>
+                                Includes {{ item.warranty.duration }}
+                                {{ item.warranty.unit }} Warranty
+                              </div>
+                            {% endif %}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Add ons -->
+                    {% if item.addons.length != 0 %}
+                      <div class="mt-2">
+                        <div class="flex flex-col gap-2">
+                          {% for addon in item.addons %}
+                            <div class="flex flex-row items-start justify-between gap-2 bg-[--light-accent-color] text-[--accent-color] p-1 px-2 rounded-sm">
+                              <div class="flex flex-col">
+                                <span class="text-[10px]">{{ addon.addonDetails.name }}</span>
+                                <span class="text-[10px] opacity-50">{{ addon.addonDetails.description }}</span>
+                              </div>
+                              <div class="text-xs">
+                                <price
+                                  data-currency="{{addon.addonDetails.currency}}"
+                                  data-price="{{ addon.addonDetails.price }}"
+                                ></price>
+                              </div>
+                            </div>
+                          {% endfor %}
+                        </div>
+                      </div>
+                    {% endif %}
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+            <p class="text-xs text-muted-foreground/70 text-center px-4">
+              Thanks for purchasing from us, you are our valued customer. Please come back again. Thanks.
+            </p>
+          </div>
+        </div>
+      </vertical-layout>
+      <script>
+        var render = function () {
+          const stars = document.querySelectorAll('.star');
+          stars.forEach((star) => {
+            star.addEventListener('click', () => {
+              const value = star.getAttribute('data-value');
+              document.querySelector('input[name="stars"]').value = value;
+
+              stars.forEach((s) => {
+                if (s.getAttribute('data-value') <= value) {
+                  s.classList.add('text-[--accent-color]');
+                } else {
+                  s.classList.remove('text-[--accent-color]');
+                }
+              });
+            });
+          });
+        };
+        render();
+      </script>
+    </slot>
+  {% else %}
+    <div class="bg-red-500/10 text-red-500 rounded-lg flex items-center justify-center text-sm h-[300px]">
+      No Order with this order id found! Please Enter Valid Order Id
+    </div>
+  {% endif %}
+</div>

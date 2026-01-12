@@ -1,0 +1,116 @@
+<div
+  class="basis-[324px] md:max-w-[324px] flex-1 flex flex-col p-2 rounded-lg border hover:bg-border/40 duration-200 w-full relative">
+  <div
+    class="absolute top-0 rounded-t-none left-4 text-xs bg-[--accent-color] text-white px-1.5 py-0.5 rounded-sm font-bold w-fit shadow-md">
+    <div class="mt-4 flex flex-col items-end">
+      <span class="text-sm leading-none">-{{ bundle.discountPercentage | times: 100}}%</span>
+      <span class="text-[10px]">OFF</span>
+    </div>
+  </div>
+  <span
+    class="absolute top-4 right-4 text-xs bg-white px-1.5 py-0.5 rounded-sm text-black font-bold w-fit shadow-md">Bundle</span>
+  {% assign checkArray = bundle.image | split:'yt:' %}
+  {% if checkArray[1] %}
+  <iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowFullScreen="false" class="w-full object-cover h-[155px] rounded-md overflow-hidden" frameBorder="0"
+    height="155" src="https://www.youtube.com/embed/{{ checkArray[1] }}" title="YouTube video player"
+    width="600"></iframe>
+  {% else %}
+  <Image src="{{bundle.image | default: '/images/no_image_placeholder.png'}}" alt="{{bundle.name}}" height="155"
+    width="600" class="w-full object-cover h-[155px] rounded-md overflow-hidden"></Image>
+  {% endif %}
+
+  <div class="mt-2 text-center font-semibold text-xl flex-1">
+    {{bundle.name}}
+  </div>
+  <div class="mt-2 flex text-lg flex-row items-end justify-between">
+    <span><span class="text-md font-light text-white opacity-80">Price:</span><span class="ml-1 font-semibold">
+        <price data-currency="usd" data-price="{{bundle.bundlePrice}}"></price>
+      </span></span>
+    <span class="px-2 text-md py-1 rounded-md bg-[--light-accent-color] text-[--accent-color]">{{
+      bundle.bundleVariants.length | default : '0'}}
+      Item{% if bundle.bundleVariants.length > 1 %}s{% endif %}</span>
+  </div>
+  <dialog>
+    <dialog-trigger>
+      <div
+        class="mt-2 bg-[--accent-color] hover:bg-[--dark-accent-color] w-full h-9 px-4 py-2 text-sm rounded-md font-medium">
+        View More
+      </div>
+    </dialog-trigger>
+    <dialog-content>
+      <dialog-header-container>
+        <dialog-header>
+          <dialog-title>{{bundle.name}}</dialog-title>
+          <dialog-description>
+            {{bundle.description}}
+          </dialog-description>
+        </dialog-header>
+      </dialog-header-container>
+      <dialog-content-container>
+        <div className="grid gap-4">
+          <!-- Product Card of groups render below -->
+          {% for bundleVariant in bundle.bundleVariants %}
+          <div class="p-2 rounded-md bg-accent/30 flex flex-row justify-between">
+            <div class="flex flex-row gap-2 w-full">
+              {% assign checkArray = bundleVariant.variant.product.images[0] | split:'yt:' %}
+              {% if checkArray[1] %}
+              <iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen="false" class="w-16 min-w-16 max-h-16 object-cover h-16 rounded-md overflow-hidden"
+                frameBorder="0" height="155" src="https://www.youtube.com/embed/{{ checkArray[1] }}"
+                title="YouTube video player" width="600"></iframe>
+              {% else %}
+              <Image src="{{bundleVariant.variant.product.images[0] | default: '/images/no_image_placeholder.png'}}"
+                alt="{{bundle.name}}" width="228" height="228"
+                class="w-[228px] min-h-[228px] min-w-[228px] object-cover h-[228px] rounded-md overflow-hidden"></Image>
+              {% endif %}
+              <div class="flex flex-col justify-between w-full">
+                <div class="">
+                  <div class="text-md font-semibold line-clamp-1">{{bundleVariant.variant.name}}</div>
+                  <div class="text-sm text-muted-foreground">{{bundleVariant.variant.product.name}}</div>
+                </div>
+                <div class="flex flex-row items-end justify-between">
+                  <div class="text-md text-muted-foreground">Price:
+                    {% if bundleVariant.variant.priceSlash != 0 %}
+                    <span>
+                      <span class="font-bold text-[--accent-color]">
+                        <price data-price="{{bundleVariant.variant.price}}"
+                          data-currency="{{bundleVariant.variant.baseCurrency}}"></price>
+                      </span>
+                      <span class="line-through text-white opacity-80 text-xs">
+                        <price data-price="{{bundleVariant.variant.priceSlash}}"
+                          data-currency="{{bundleVariant.variant.baseCurrency}}"></price>
+                      </span>
+                    </span>
+                    {% else %}
+                    <span class="font-bold text-[--accent-color]">
+                      <price data-price="{{bundleVariant.variant.price}}"
+                        data-currency="{{bundleVariant.variant.baseCurrency}}"></price>
+                    </span>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </dialog-content-container>
+      <dialog-footer class="flex flex-col">
+        <p class="text-xs text-muted-foreground/60">Bundles will only deliver one variant of each product
+          variants listed above.</p>
+        <div class="w-full">
+          <input type="hidden" name="type" value="bundle">
+          <input type="hidden" name="bundleId" value="{{ bundle.id }}">
+          <div class="flex flex-row justify-between gap-3 pt-3">
+            <input name="coupon" type="text" placeholder="Enter Coupon Code" class="flex-1 rounded-md mr-2">
+            <button id="bundle-add-to-cart" type="button"
+              class="min-w-[93px] text-xs px-3 h-8 rounded-md text-white bg-[--accent-color] hover:bg-[--dark-accent-color] duration-200 shrink-0">
+              Add To Cart
+            </button>
+          </div>
+        </div>
+      </dialog-footer>
+    </dialog-content>
+  </dialog>
+</div>

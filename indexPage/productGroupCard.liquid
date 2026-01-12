@@ -1,0 +1,132 @@
+<div class="basis-[324px] md:max-w-[324px] h-full bg-white bg-opacity-[0.04] shadow-lg backdrop-blur-sm flex-1 flex flex-col p-2 rounded-3xl border duration-200 w-full relative">
+  <dialog>
+    <dialog-trigger>
+      <span class="absolute top-4 right-4 text-xs bg-white px-1.5 py-0.5 rounded-lg text-black font-bold w-fit shadow-md">Group</span>
+      {% assign checkArray = product.image | split: 'yt:' %}
+
+      {% if checkArray[1] %}
+        <iframe
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen="false"
+          class="w-full object-cover h-[172px] rounded-2xl overflow-hidden"
+          frameBorder="0"
+          height="139"
+          src="https://www.youtube.com/embed/{{ checkArray[1] }}"
+          title="YouTube video player"
+          width="450"></iframe>
+      {% else %}
+        <Image
+          src="{{product.image | default: '/images/no_image_placeholder.png'}}"
+          alt="{{product.name}}"
+          height="139"
+          width="450"
+          class="w-full object-cover h-[172px] rounded-2xl overflow-hidden"></Image>
+      {% endif %}
+
+      <div class="flex flex-row justify-between items-center">
+        <div class="mt-2 text-left font-semibold text-lg flex-1">
+          {{ product.name }}
+        </div>
+        <div class="mt-2 flex flex-row items-end justify-between">
+          {% if product.stockVisible %}
+            <div class="text-xs ">
+              {% if product.stockCount > 0 %}
+                <span class="px-2 py-1 rounded-md bg-green-500/15 text-green-500">{{ product.stockCount }} In               
+                      Stock</span>
+              {% else %}
+                <span class="px-2 py-1 rounded-md bg-red-500/15 text-red-500">Out of Stock</span>
+              {% endif %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="mt-2 flex w-full flex-row items-end gap-4">
+        <button class="duration-200 inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground px-4 py-2 h-12 w-full rounded-full border border-muted-foreground/10 bg-[#2A2C32] shadow-lg drop-shadow-lg">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-eye"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" /><circle
+              cx="12"
+              cy="12"
+              r="3" /></svg>
+          <span>View Products</span>
+        </button>
+        <div class="outfit flex flex-col">
+          <span class="text-end text-xs text-muted-foreground">Starting at</span>
+          {% if product.priceSlash != 0 %}
+            <span>
+              <span class="font-bold text-2xl text-[--accent-color]">
+                <price data-currency="{{product.baseCurrency}}" data-price="{{product.price}}"></price>
+              </span>
+              <span class="line-through text-sm text-white opacity-80">
+                <price data-currency="{{product.baseCurrency}}" data-price="{{product.priceSlash}}"></price>
+              </span>
+            </span>
+          {% else %}
+            <span class="text-2xl font-bold text-brand text-[--accent-color]">
+              <price data-currency="{{product.baseCurrency}}" data-price="{{product.price}}"></price>
+            </span>
+          {% endif %}
+        </div>
+      </div>
+    </dialog-trigger>
+    <dialog-content>
+      <dialog-header-container>
+        <dialog-header>
+          <dialog-title>{{ product.name }}</dialog-title>
+          <dialog-description>
+            {{ product.description }}
+          </dialog-description>
+        </dialog-header>
+      </dialog-header-container>
+      <dialog-content-container>
+        <div className="grid gap-4">
+          <!-- Product Card of groups render below -->
+          {% for groupedProduct in product.groupedProducts %}
+            <div class="p-2 rounded-md bg-accent/30 flex flex-row justify-between">
+              <div class="flex flex-row gap-2 w-full">
+                <Image
+                  width="64"
+                  height="64"
+                  src="{{groupedProduct.images[0] | default: '/images/no_image_placeholder.png'}}"
+                  alt="{{groupedProduct.name}}"
+                  class="w-16 h-16 object-cover rounded-md"></Image>
+                <div class="flex flex-col justify-between w-full">
+                  <div class="">
+                    <div class="text-sm font-semibold line-clamp-1">{{ groupedProduct.name }}</div>
+                    <div class="text-xs text-muted-foreground">Contains {{ groupedProduct.variantsCount }}
+                      Product{% if groupedProduct.variantsCount > 1 %}s{% endif %}
+                    </div>
+                  </div>
+                  <div class="flex flex-row items-end justify-between">
+                    <div class="text-xs text-muted-foreground">Starting
+                      <span class="font-bold text-[--accent-color]">
+                        <price data-price="{{groupedProduct.priceRaw}}" data-currency="{{gropuedProduct.baseCurrency}}"></price>
+                      </span>
+                    </div>
+                    <link-button
+                      href="/product/{{groupedProduct.url}}"
+                      class="bg-[--accent-color] hover:bg-[--dark-accent-color] text-xs h-6 px-2"
+                      data-id="b782100d-cb9a-4697-ad14-eaeca69760f7"
+                      data-label="Purchase"
+                      data-variant="default"
+                      data-href="/product/{{groupedProduct.url}}">
+                      <span>Purchase</span>
+                    </link-button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </dialog-content-container>
+    </dialog-content>
+  </dialog>
+</div>

@@ -1,0 +1,294 @@
+<div>
+  <div class="flex min-h-[100svh] bg-cover mx-auto !scroll-smooth flex md:flex-row flex-col">
+    <!-- Products List and Pricing -->
+    <div class="w-full md:w-[44%] flex pl-4 pr-4 md:pr-0 md:pl-10 md:justify-end bg-muted/50">
+      <div class="md:max-w-sm md:mr-10 lg:mr-16 flex flex-col gap-4 w-full py-6 md:py-14">
+        <div class="flex flex-col gap-4 flex-1">
+          <!-- Back To Store Button -->
+          <a href="/" class="flex flex-row items-center gap-2 group w-fit">
+            <div class="p-1.5 rounded-full bg-muted/50 text-white/80 group-hover:text-white hover:bg-muted/70 duration-200">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 18 18">
+                <title>Back to store</title><g fill="#ffffff"><path d="M11.5 15.25L5.25 9L11.5 2.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"></path></g>
+              </svg>
+            </div>
+            <span class="text-xs text-white/80 group-hover:text-white">Back To Store </span>
+          </a>
+          <!-- Store Icon Name -->
+          <div class="flex flex-row items-center gap-2 group w-fit mt-4">
+            <fade-in-image
+              alt="website logo"
+              src="{{ image }}"
+              class="h-6 w-6 rounded-sm object-contain"
+            ></fade-in-image>
+            <span class="text-xs font-semibold text-[--accent-color]">{{ name }}</span>
+          </div>
+          <!-- Checkout Amount -->
+          <div class="bg-accent/30 p-3 rounded-lg flex flex-col gap-4">
+            <div class="gap-4 flex  flex-row items-center justify-between">
+              <div class="text-muted-foreground/70 text-xs">Total</div>
+              <div id="subtotal_price" class="text-xs text-muted-foreground text-white font-semibold">
+                <price data-currency="{{ currencyToUseForTotal }}" data-price="{{ total }}"></price>
+              </div>
+            </div>
+          </div>
+          <!-- Checkout Products -->
+          <div class="w-full flex flex-col gap-4">
+            <div class="gap-3 flex flex-col overflow-y-scroll md:max-h-[calc(100svh-509px)] no-scroll-bar">
+              <!-- Cart Products List -->
+              {% for item in cart.items %}
+                {% assign variant_price = item.variant.price | append: '' %}
+                {% assign variant_unitPrice = item.variant.unitPrice | append: '' %}
+                <div class="flex flex-col gap-1">
+                  <div class="w-full flex flex-row items-center gap-3 relative">
+                    <!-- Bulk Discounts -->
+                    {% if item.variant.applicableBulkDiscount
+                      and item.variant.applicableBulkDiscount.discountPercent > 0
+                    %}
+                      <div
+                        class="flex flex-row items-center gap-1 bg-[--accent-color] px-2 rounded-full py-0.5 absolute -top-[24px] right-8"
+                      >
+                        <span class="text-[10px] rounded-md text-white font-semibold"
+                          >Add {{ item.variant.applicableBulkDiscount.minQuantity }} & Get
+                          {{ item.variant.applicableBulkDiscount.discountPercent }}% Off</span
+                        >
+                      </div>
+                    {% endif %}
+                    {% if path == '/checkout' %}
+                      <action-button
+                        type="button"
+                        function-name="removeCartItem"
+                        variant-id="{{ item.variant.id }}"
+                        class="p-1 absolute -top-1 right-0 rounded-full hover:bg-red-500/20 duration-200 text-muted-foreground hover:text-red-500 cursor-pointer"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 18 18">
+                          <title>trash</title><g fill="currentColor"> <path d="M13.605 4.75L13.099 14.355C13.043 15.417 12.165 16.25 11.102 16.25H6.89698C5.83298 16.25 4.95598 15.417 4.89998 14.355L4.39398 4.75" fill="currentColor" fill-opacity="0.3" data-stroke="none" stroke="none"></path> <path d="M13.605 4.75L13.099 14.355C13.043 15.417 12.165 16.25 11.102 16.25H6.89698C5.83298 16.25 4.95598 15.417 4.89998 14.355L4.39398 4.75" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" fill="none"></path> <path d="M2.75 4.75H15.25" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" fill="none"></path> <path d="M6.75 4.75V2.75C6.75 2.198 7.198 1.75 7.75 1.75H10.25C10.802 1.75 11.25 2.198 11.25 2.75V4.75" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" fill="none"></path> </g>
+                        </svg>
+                      </action-button>
+                    {% endif %}
+                    <fade-in-image
+                      alt="product image"
+                      src="{{item.image | default: '/images/no_image_placeholder.png'}}"
+                      class="h-14 w-14 min-w-14 min-h-14 rounded-md object-cover shrink-0"
+                    >
+                    </fade-in-image>
+                    <div class="w-full flex flex-col sm:flex-row justify-between gap-2">
+                      <!-- Product Info -->
+                      <div class="flex flex-col justify-between gap-1 w-full">
+                        <div class="flex flex-col">
+                          <div class="text-sm font-medium line-clamp-1">{{ item.name }}</div>
+                          <div class="text-[10px] text-muted-foreground/70 line-clamp-1">{{ item.variant.name }}</div>
+                        </div>
+                        <div class="flex flex-row items-center justify-between gap-2">
+                          <div class="flex items-end gap-1 text-sm font-medium text-[--accent-color]">
+                            {% if variant_price != variant_unitPrice %}
+                              <div class="text-muted-foreground line-through">
+                                <price
+                                  data-currency="{{ item.variant.currency }}"
+                                  data-price="{{ item.variant.unitPrice }}"
+                                ></price>
+                              </div>
+                            {% endif %}
+                            <price data-currency="{{ item.variant.currency }}" data-price="{{ item.variant.price }}">
+                            </price>
+                            <span class="text-[10px] leading-[14px] text-muted-foreground/70"
+                              >x{{ item.quantity -}}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {% if path == '/checkout' %}
+                      <div class="flex flex-col h-full justify-end items-end gap-2">
+                        <div class="flex flex-row items-center gap-2">
+                          <span class="text-[10px] text-muted-foreground/70 hidden sm:inline-block">Quantity:</span>
+                          <div class="flex flex-row gap-4 items-center">
+                            <server-form action-name="setCartItemQuantity" class="w-full flex flex-row items-center">
+                              <input type="hidden" name="variantId" value="{{ item.variant.id }}">
+                              <input
+                                type="hidden"
+                                id="quantity-item-{{item.variant.id}}"
+                                name="quantity"
+                                value="{{ item.quantity }}"
+                              >
+                              <custom-button
+                                type="submit"
+                                id="decrement-item-{{item.variant.id}}"
+                                class="h-5 hover:bg-[--accent-color] px-1.5 bg-accent rounded-md"
+                                >-
+                              </custom-button>
+                              <span id="quantity-display-{{item.variant.id}}" class="text-white text-xs mx-2">
+                                {{- item.quantity -}}
+                              </span>
+                              <custom-button
+                                type="submit"
+                                id="increment-item-{{item.variant.id}}"
+                                class="h-5 hover:bg-[--accent-color] px-1.5 bg-accent rounded-md"
+                                >+
+                              </custom-button>
+                            </server-form>
+                          </div>
+                        </div>
+                      </div>
+                    {% endif %}
+                  </div>
+                  <!-- Product Addons -->
+                  {% if item.addons.length > 0 %}
+                    <div class="mt-2">
+                      <div class="flex flex-col gap-2">
+                        {% for addon in item.addons %}
+                          <div
+                            class="flex text-[10px] flex-row items-start justify-between gap-2 bg-[--light-accent-color] text-[--accent-color] px-2 py-1 rounded"
+                          >
+                            <div class="flex flex-row items-center gap-1.5">
+                              <svg
+                                class="text-[--accent-color]"
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="12"
+                                height="12"
+                                viewBox="0 0 18 18"
+                              >
+                                <title>grid-circle-plus</title><g fill="currentColor"><path d="M15.5,12h-1.75v-1.75c0-.414-.336-.75-.75-.75s-.75,.336-.75,.75v1.75h-1.75c-.414,0-.75,.336-.75,.75s.336,.75,.75,.75h1.75v1.75c0,.414,.336,.75,.75,.75s.75-.336,.75-.75v-1.75h1.75c.414,0,.75-.336,.75-.75s-.336-.75-.75-.75Z" fill="currentColor"></path><circle cx="5" cy="5" r="3.25" fill="currentColor"></circle><circle cx="13" cy="5" r="3.25" fill="currentColor"></circle><circle cx="5" cy="13" r="3.25" fill="currentColor"></circle></g>
+                              </svg>
+                              <span>{{ addon.name }}</span>
+                            </div>
+                            <price data-currency="{{ addon.currency }}" data-price="{{ addon.price }}"></price>
+                          </div>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  {% endif %}
+                </div>
+              {% endfor %}
+              <!-- Cart Bundle List -->
+              {% for item in cart.bundles %}
+                <div class="relative w-full flex flex-row items-center gap-3">
+                  <action-button
+                    type="button"
+                    function-name="removeCartBundle"
+                    bundle-id="{{ item.id }}"
+                    class="p-1 absolute -top-1 right-0 rounded-full hover:bg-red-500/20 duration-200 text-muted-foreground hover:text-red-500 cursor-pointer"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 18 18">
+                      <title>trash</title><g fill="currentColor"> <path d="M13.605 4.75L13.099 14.355C13.043 15.417 12.165 16.25 11.102 16.25H6.89698C5.83298 16.25 4.95598 15.417 4.89998 14.355L4.39398 4.75" fill="currentColor" fill-opacity="0.3" data-stroke="none" stroke="none"></path> <path d="M13.605 4.75L13.099 14.355C13.043 15.417 12.165 16.25 11.102 16.25H6.89698C5.83298 16.25 4.95598 15.417 4.89998 14.355L4.39398 4.75" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" fill="none"></path> <path d="M2.75 4.75H15.25" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" fill="none"></path> <path d="M6.75 4.75V2.75C6.75 2.198 7.198 1.75 7.75 1.75H10.25C10.802 1.75 11.25 2.198 11.25 2.75V4.75" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" fill="none"></path> </g>
+                    </svg>
+                  </action-button>
+                  <div
+                    alt="product image"
+                    class="flex items-center justify-center bg-muted-foreground/10 text-muted-foreground/70 h-14 w-14 min-w-14 min-h-14 rounded-md object-cover shrink-0"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 18 18">
+                      <title>box</title><g fill="#5e5e5e"><path d="M13.25 5.25H4.75C3.64543 5.25 2.75 6.14543 2.75 7.25V13.25C2.75 14.3546 3.64543 15.25 4.75 15.25H13.25C14.3546 15.25 15.25 14.3546 15.25 13.25V7.25C15.25 6.14543 14.3546 5.25 13.25 5.25Z" fill="#5e5e5e" fill-opacity="0.3" data-stroke="none" stroke="none"></path> <path d="M9 2.25V8.25" stroke="#5e5e5e" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" fill="none"></path> <path d="M13.25 5.25H4.75C3.64543 5.25 2.75 6.14543 2.75 7.25V13.25C2.75 14.3546 3.64543 15.25 4.75 15.25H13.25C14.3546 15.25 15.25 14.3546 15.25 13.25V7.25C15.25 6.14543 14.3546 5.25 13.25 5.25Z" stroke="#5e5e5e" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" fill="none"></path> <path d="M3 6.284L4.449 3.362C4.787 2.681 5.481 2.25 6.241 2.25H11.759C12.519 2.25 13.213 2.681 13.551 3.362L15 6.285" stroke="#5e5e5e" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" fill="none"></path> <path d="M5.25 12.75H7.25" stroke="#5e5e5e" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" fill="none"></path></g>
+                    </svg>
+                  </div>
+                  <div class="w-full flex flex-col sm:flex-row justify-between gap-2">
+                    <!-- Product Info -->
+                    <div class="flex flex-col justify-between gap-1 w-full">
+                      <div class="flex flex-col">
+                        <div class="text-sm font-medium line-clamp-1">{{ item.name }}</div>
+                        <div class="text-[10px] text-muted-foreground/70 line-clamp-1">
+                          Contains {{ item.variants.length }}
+                          Variants
+                        </div>
+                      </div>
+                      <div class="flex flex-row items-end justify-between gap-1">
+                        <div class="text-sm font-medium text-[--accent-color]">
+                          <price data-currency="{{ item.currency }}" data-price="{{ item.total }}"></price>
+                          <span class="text-[10px] text-muted-foreground/70">x1</span>
+                        </div>
+
+                        <span
+                          class="text-[8px] px-1.5 py-0.5 font-semibold rounded-sm bg-[--light-accent-color] text-[--accent-color]"
+                        >
+                          BUNDLE
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        <!-- Checkout Pricing -->
+        {% assign path_parts = path | split: "/" %}
+        {% for part in path_parts %}
+          {% if part == "checkout" %}
+            <div class="gap-2 flex flex-col">
+              <div class="gap-4 flex flex-row items-center justify-between">
+                <div class="text-muted-foreground/70 text-xs">Subtotal</div>
+                <div id="subtotal_price" class="text-xs text-muted-foreground text-white font-semibold">
+                  <price data-currency="{{ currencyToUseForTotal }}" data-price="{{ subtotal }}"></price>
+                </div>
+              </div>
+              {% if bulkDiscount > 0 %}
+                <div class="gap-4 flex flex-row items-center justify-between">
+                  <div class="text-blue-500 text-xs">Bulk Discount</div>
+                  <div id="bulk_discount" class="text-xs text-blue-500 font-semibold">
+                    <price data-currency="{{ currencyToUseForTotal }}" data-price="-{{ bulkDiscount }}"></price>
+                  </div>
+                </div>
+              {% endif %}
+              {% if couponsApplied > 0 %}
+                <div class="gap-4 flex flex-row items-center justify-between">
+                  <div class="text-green-500 text-xs">Coupon Discount</div>
+                  <div id="coupon_discount" class="text-xs text-green-500 font-semibold">
+                    <price data-currency="{{ currencyToUseForTotal }}" data-price="-{{ couponDiscount }}"></price>
+                  </div>
+                </div>
+              {% endif %}
+              <!-- Display addons in totals box -->
+              <div class="flex flex-col gap-1">
+                {% for item in cart.items %}
+                  {% if item.addons.length > 0 %}
+                    <div class="text-[10px] text-muted-foreground/50">{{ item.name }} Addons</div>
+                  {% endif %}
+                  {% if item.addons.length > 0 %}
+                    <div class="flex flex-col gap-1">
+                      {% for addon in item.addons %}
+                        <div class="flex flex-row items-center justify-between">
+                          <div class="flex flex-row gap-1.5 items-center">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="12"
+                              height="12"
+                              viewBox="0 0 18 18"
+                            >
+                              <title>grid-circle-plus</title><g fill="currentColor"><path d="M15.5,12h-1.75v-1.75c0-.414-.336-.75-.75-.75s-.75,.336-.75,.75v1.75h-1.75c-.414,0-.75,.336-.75,.75s.336,.75,.75,.75h1.75v1.75c0,.414,.336,.75,.75,.75s.75-.336,.75-.75v-1.75h1.75c.414,0,.75-.336,.75-.75s-.336-.75-.75-.75Z" fill="currentColor"></path><circle cx="5" cy="5" r="3.25" fill="currentColor"></circle><circle cx="13" cy="5" r="3.25" fill="currentColor"></circle><circle cx="5" cy="13" r="3.25" fill="currentColor"></circle></g>
+                            </svg>
+                            <span class="text-xs">{{ addon.name }}</span>
+                          </div>
+                          <div class="text-xs font-semibold">
+                            +<price data-currency="{{ addon.currency }}" data-price="{{ addon.price }}"></price>
+                          </div>
+                        </div>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              </div>
+              <!-- Product Seprator -->
+              <div class="w-full h-[1px] bg-accent my-2"></div>
+              <div class="gap-4 flex flex-row items-center justify-between">
+                <div class="text-xs">Payment Method Fee</div>
+                <div class="text-xs font-semibold">
+                  <price id="upcharge_fee" data-currency="{{ currencyToUseForTotal }}" data-price="0"></price>
+                </div>
+              </div>
+              <div class="gap-4 flex flex-row items-center justify-between">
+                <div class="font-semibold text-muted-foreground/70 text-sm">Total</div>
+                <div id="total_price" class="text-sm font-semibold text-white">
+                  <price data-currency="{{ currencyToUseForTotal }}" data-price="{{ total }}"></price>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+    <!-- Payment Form -->
+    <div class="w-full md:w-[56%] pr-4 md:pr-10 pl-4 md:pl-0 flex flex-col gap-4 max-h-[100svh] sm:overflow-y-auto">
+      {% block content -%}
+      {%- endblock %}
+    </div>
+  </div>
+</div>

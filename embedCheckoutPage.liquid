@@ -1,0 +1,669 @@
+<div>
+  <div class="md:ml-10 lg:ml-16 md:max-w-xl py-6 md:py-14 flex flex-col gap-4">
+    {% if path == '/checkout' %}
+      <!-- Apply Coupon -->
+      <div class="flex flex-col gap-4">
+        <div>
+          <div class="font-semibold text-xs">Have a coupon?</div>
+          <div class="text-muted-foreground/70 text-xs">Got a magic code? Enter it here for discount!</div>
+        </div>
+        <div>
+          <server-form action-name="applyCoupon" class="w-full flex items-center gap-2">
+            <input name="coupon" type="text" class="w-full bg-accent/20" placeholder="Enter coupon code">
+            <custom-optimistic-button
+              type="submit"
+              class="w-fit space-x-2 bg-accent hover:bg-accent/80 text-white px-2"
+              variant="outline"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 18 18">
+                <title>plus</title><g fill="currentColor"><path d="M9 3.25V14.75" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" fill="none"></path> <path d="M3.25 9H14.75" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" fill="none"></path></g>
+              </svg>
+            </custom-optimistic-button>
+          </server-form>
+        </div>
+      </div>
+      <!-- Delivery Email -->
+      <div class="flex flex-col gap-4">
+        <div>
+          <div class="font-semibold text-xs">Delivery Email</div>
+          <div class="text-muted-foreground/70 text-xs">
+            Email address you want your product to be sent on, Invoice Included!
+          </div>
+        </div>
+        <div class="w-full">
+          <input
+            required="{true}"
+            id="email-input"
+            name="email"
+            type="email"
+            class="w-full bg-accent/20"
+            placeholder="Enter your email address"
+            form="invoice-form"
+          >
+        </div>
+      </div>
+      <!-- Referral Code -->
+      <div class="flex flex-col gap-4">
+        <div>
+          <div class="font-semibold text-xs">Referral Code</div>
+          <div class="text-muted-foreground/70 text-xs">Referred by someone? Type their referral code in here.</div>
+        </div>
+        <div class="w-full">
+          <input
+            minLength="1"
+            id="referral-input"
+            name="referral-input"
+            type="text"
+            class="w-full bg-accent/20"
+            placeholder="Enter the referral code"
+          >
+        </div>
+      </div>
+    {% endif %}
+    <!-- Payment Methods -->
+    <div class="flex flex-col gap-4">
+      <div>
+        <div class="font-semibold text-xs">How would you like to pay?</div>
+      </div>
+      <div class="flex flex-col gap-4">
+        <!-- Payment Plugins -->
+        {% for plugin in paymentPlugins %}
+          {% if plugin.isActive %}
+            <div
+              data-name="{{ plugin.name }}"
+              class="duration-300 border border-transparent cursor-pointer w-full px-4 hover:bg-accent/60 flex flex-1 items-center justify-between py-4 text-sm font-medium transition-all rounded-lg bg-accent/30"
+            >
+              <div class="flex flex-row items-center gap-4">
+                <Image
+                  height="20"
+                  width="20"
+                  alt="{{ plugin.name }}"
+                  src="{{ plugin.image }}"
+                  class="h-5 w-5 rounded-md object-cover"
+                ></Image>
+                <span>{{ plugin.name }}</span>
+              </div>
+              <div select-name="select-btn-{{ plugin.name }}" class="px-3 py-1 text-xs bg-white/10 rounded-md">
+                Select
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+        {% for manualPaymentMethod in manualPaymentMethods %}
+          <div
+            data-name="{{ manualPaymentMethod.name }}"
+            class="duration-300 border border-transparent cursor-pointer w-full px-4 hover:bg-accent/60 flex flex-1 items-center justify-between py-4 text-sm font-medium transition-all rounded-lg bg-accent/30"
+          >
+            <div class="flex flex-row items-center gap-4">
+              <Image
+                height="20"
+                width="20"
+                alt="{{ manualPaymentMethod.name }}"
+                src="{{ manualPaymentMethod.image }}"
+                class="h-5 w-5 rounded-md object-cover"
+              ></Image>
+              <span>{{ manualPaymentMethod.name }}</span>
+            </div>
+            <div
+              select-name="select-btn-{{ manualPaymentMethod.name }}"
+              class="px-2 py-0.5 text-[10px] bg-white/10 rounded-md"
+            >
+              Select
+            </div>
+          </div>
+        {% endfor %}
+        <!-- Payment Methods & Plugins -->
+        {% for method in paymentMethodInfo %}
+          <div class="flex flex-col gap-2">
+            <!-- Payment Title and desc -->
+            <div class="">
+              {% case method.name %}
+                {% when 'stripe' %}
+                  <div>
+                    <div class="font-semibold text-xs">Stripe</div>
+                    <div class="text-muted-foreground/70 text-xs">Pay with your Debit/Credit Card using Stripe.</div>
+                  </div>
+                {% when 'sumup' %}
+                  <div>
+                    <div class="font-semibold text-xs">SumUp</div>
+                    <div class="text-muted-foreground/70 text-xs">Pay with your Debit/Credit Card using SumUp.</div>
+                  </div>
+                {% when 'cardToCrypto' %}
+                  <div>
+                    <div class="font-semibold text-xs">Debit/Credit Card</div>
+                    <div class="text-muted-foreground/70 text-xs">Pay with your Debit/Credit Card.</div>
+                  </div>
+                {% when 'paypal' %}
+                  <div>
+                    <div class="font-semibold text-xs">PayPal</div>
+                    <div class="text-muted-foreground/70 text-xs">Pay with your PayPal Account.</div>
+                  </div>
+                {% when 'square' %}
+                  <div>
+                    <div class="font-semibold text-xs">Square</div>
+                    <div class="text-muted-foreground/70 text-xs">Pay with your Debit/Credit Card using Square.</div>
+                  </div>
+                {% when 'paypalF&F' %}
+                  <div>
+                    <div class="font-semibold text-xs">PayPal Friends & Family</div>
+                    <div class="text-muted-foreground/70 text-xs">Pay with your PayPal Account.</div>
+                  </div>
+                {% when 'paypalIPN' %}
+                  <div>
+                    <div class="font-semibold text-xs">PayPal Friends & Family</div>
+                    <div class="text-muted-foreground/70 text-xs">Pay with your PayPal Account.</div>
+                  </div>
+                {% when 'cashapp' %}
+                  <div>
+                    <div class="font-semibold text-xs">CashApp</div>
+                    <div class="text-muted-foreground/70 text-xs">Pay with your CashApp Account.</div>
+                  </div>
+                {% when 'cryptoCurrency' %}
+                  <div>
+                    <div class="font-semibold text-xs">CryptoCurrency</div>
+                    <div class="text-muted-foreground/70 text-xs">Pay with your CryptoCurrency.</div>
+                  </div>
+                {% when 'customerBalance' %}
+                  <div>
+                    <div class="font-semibold text-xs">Customer Balance</div>
+                    <div class="text-muted-foreground/70 text-xs">Pay with your Store Balance.</div>
+                  </div>
+              {% endcase %}
+            </div>
+            <!-- Payment Method -->
+            <div
+              data-name="{{ method.name }}"
+              class="duration-300 border cursor-pointer w-full pr-4 pl-2 py-2 hover:bg-accent/60 flex flex-1 items-center justify-between text-sm font-medium transition-all rounded-lg bg-accent/30"
+            >
+              <div class="flex flex-col gap-4 w-full">
+                <div class="flex flex-row items-center justify-between">
+                  <div class="flex flex-row items-center gap-4">
+                    {% case method.name %}
+                      {% when 'stripe' %}
+                        <div class="p-2.5 rounded-md bg-purple-500/10">
+                          <svg width="16" height="16" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="512" cy="512" r="512" style="fill:#635bff" />
+                            <path
+                              d="M781.67 515.75c0-38.35-18.58-68.62-54.08-68.62s-57.23 30.26-57.23 68.32c0 45.09 25.47 67.87 62 67.87 17.83 0 31.31-4 41.5-9.74v-30c-10.19 5.09-21.87 8.24-36.7 8.24-14.53 0-27.42-5.09-29.06-22.77h73.26c.01-1.92.31-9.71.31-13.3m-74-14.23c0-16.93 10.34-24 19.78-24 9.14 0 18.88 7 18.88 24zm-95.14-54.39a42.32 42.32 0 0 0-29.36 11.69l-1.95-9.29h-33v174.68l37.45-7.94.15-42.4c5.39 3.9 13.33 9.44 26.52 9.44 26.82 0 51.24-21.57 51.24-69.06-.12-43.45-24.84-67.12-51.05-67.12m-9 103.22c-8.84 0-14.08-3.15-17.68-7l-.15-55.58c3.9-4.34 9.29-7.34 17.83-7.34 13.63 0 23.07 15.28 23.07 34.91.01 20.03-9.28 35.01-23.06 35.01zM496.72 438.29l37.6-8.09v-30.41l-37.6 7.94zm0 11.39h37.6v131.09h-37.6zm-40.3 11.08L454 449.68h-32.34v131.08h37.45v-88.84c8.84-11.54 23.82-9.44 28.46-7.79v-34.45c-4.78-1.8-22.31-5.1-31.15 11.08m-74.91-43.59L345 425l-.15 120c0 22.17 16.63 38.5 38.8 38.5 12.28 0 21.27-2.25 26.22-4.94v-30.45c-4.79 1.95-28.46 8.84-28.46-13.33v-53.19h28.46v-31.91h-28.51zm-101.27 70.56c0-5.84 4.79-8.09 12.73-8.09a83.56 83.56 0 0 1 37.15 9.59V454a98.8 98.8 0 0 0-37.12-6.87c-30.41 0-50.64 15.88-50.64 42.4 0 41.35 56.93 34.76 56.93 52.58 0 6.89-6 9.14-14.38 9.14-12.43 0-28.32-5.09-40.9-12v35.66a103.85 103.85 0 0 0 40.9 8.54c31.16 0 52.58-15.43 52.58-42.25-.17-44.63-57.25-36.69-57.25-53.47"
+                              style="fill:#fff" />
+                          </svg>
+                        </div>
+                      {% when 'customerBalance' %}
+                        <div class="p-2.5 rounded-md bg-accent/40">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 18 18">
+                            <g fill="#5e5e5e"><path fill-rule="evenodd" clip-rule="evenodd" d="M15.75 13.25V11.25H13C12.034 11.25 11.25 10.466 11.25 9.5C11.25 8.533 12.034 7.75 13 7.75H15.75V5.75C15.75 4.645 14.855 3.75 13.75 3.75H4.25C3.145 3.75 2.25 4.645 2.25 5.75V13.25C2.25 14.355 3.145 15.25 4.25 15.25H13.75C14.855 15.25 15.75 14.355 15.75 13.25Z" fill="#5e5e5e" fill-opacity="0.3" data-stroke="none" stroke="none"></path> <path d="M2.25 5.49998C2.25 3.76698 3.499 2.28698 5.207 1.99498L11.769 0.874982C12.203 0.800982 12.635 1.01998 12.832 1.41398L12.885 1.51998" stroke="#5e5e5e" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" fill="none"></path> <path d="M15.75 11.25V13.25C15.75 14.355 14.855 15.25 13.75 15.25H4.25C3.145 15.25 2.25 14.355 2.25 13.25V5.75C2.25 4.645 3.145 3.75 4.25 3.75H13.75C14.855 3.75 15.75 4.645 15.75 5.75V7.75" stroke="#5e5e5e" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" fill="none"></path> <path d="M15.75 11.25H13C12.034 11.25 11.25 10.466 11.25 9.5C11.25 8.533 12.034 7.75 13 7.75H15.75C16.302 7.75 16.75 8.198 16.75 8.75V10.25C16.75 10.802 16.302 11.25 15.75 11.25Z" stroke="#5e5e5e" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" fill="none"></path></g>
+                          </svg>
+                        </div>
+                      {% when 'cardToCrypto' %}
+                        <div class="p-2.5 rounded-md bg-accent/40">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            viewBox="0 0 512 512"
+                            xml:space="preserve"
+                          >
+                            <path style="fill:#5286f9"
+                              d="M488.727 66.494H23.273C10.42 66.494 0 76.914 0 89.767v332.466c0 12.853 10.42 23.273 23.273 23.273h465.454c12.853 0 23.273-10.42 23.273-23.273V89.767c0-12.853-10.42-23.273-23.273-23.273" />
+                            <path style="fill:#ffb655"
+                              d="M273.776 189.773c5.115 5.86 9.57 12.31 13.236 19.242a100.2 100.2 0 0 1 11.655 46.986c0 16.96-4.228 32.943-11.655 46.986a101.3 101.3 0 0 1-13.236 19.24A101.6 101.6 0 0 1 256 338.296c16.454 11.664 36.523 18.553 58.182 18.553 55.608 0 100.849-45.241 100.849-100.848S369.79 155.152 314.182 155.152c-21.659 0-41.728 6.886-58.182 18.553a101.8 101.8 0 0 1 17.776 16.068" />
+                            <path style="fill:#d8143a"
+                              d="M287.012 209.016a101.2 101.2 0 0 0-13.236-19.242A101.7 101.7 0 0 0 256 173.708c-16.452-11.667-36.523-18.553-58.182-18.553-55.608 0-100.848 45.241-100.848 100.848s45.241 100.848 100.848 100.848c21.659 0 41.73-6.887 58.182-18.553a101.7 101.7 0 0 0 17.776-16.067c5.115-5.86 9.57-12.31 13.236-19.24a100.2 100.2 0 0 0 11.655-46.986 100.2 100.2 0 0 0-11.655-46.989" />
+                            <path style="fill:#3d6deb"
+                              d="M197.818 356.851c-55.608 0-100.848-45.241-100.848-100.848s45.241-100.848 100.848-100.848c21.659 0 41.728 6.886 58.182 18.553V66.494H23.273C10.42 66.494 0 76.914 0 89.767v332.466c0 12.853 10.42 23.273 23.273 23.273H256v-107.21c-16.454 11.666-36.523 18.555-58.182 18.555" />
+                          </svg>
+                        </div>
+                      {% when 'paypal' %}
+                        <div class="p-2.5 rounded-md bg-blue-500/10">
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 48 48"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <circle cx="24" cy="24" r="20" fill="#0070BA" />
+                            <path
+                              d="M32.33 18.098q-.033.213-.076.437c-.984 5.051-4.35 6.796-8.648 6.796h-2.189c-.525 0-.968.382-1.05.9l-1.12 7.107-.318 2.015a.56.56 0 0 0 .553.647h3.881c.46 0 .85-.334.923-.787l.038-.198.731-4.638.047-.254a.934.934 0 0 1 .922-.79h.581c3.761 0 6.705-1.526 7.566-5.945.36-1.846.173-3.387-.778-4.471a3.7 3.7 0 0 0-1.062-.82"
+                              fill="#fff" fill-opacity=".6" />
+                            <path
+                              d="M31.3 17.687a8 8 0 0 0-.956-.212 12 12 0 0 0-1.93-.141h-5.846a.93.93 0 0 0-.922.789L20.402 26l-.036.23c.082-.518.525-.9 1.05-.9h2.19c4.298 0 7.664-1.746 8.648-6.796q.044-.224.076-.437a5 5 0 0 0-.809-.342z"
+                              fill="#fff" fill-opacity=".8" />
+                            <path
+                              d="M21.646 18.123a.93.93 0 0 1 .922-.788h5.847c.693 0 1.34.045 1.93.14q.252.042.492.094a8 8 0 0 1 .685.187q.435.145.809.342c.293-1.867-.002-3.138-1.012-4.289C30.207 12.542 28.2 12 25.63 12h-7.46c-.525 0-.973.382-1.054.901l-3.107 19.696a.64.64 0 0 0 .632.741h4.606l1.156-7.337z"
+                              fill="#fff" />
+                          </svg>
+                        </div>
+
+                      {% when 'paypalF&F' %}
+                        <div class="p-2.5 rounded-md bg-blue-500/10">
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 48 48"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <circle cx="24" cy="24" r="20" fill="#0070BA" />
+                            <path
+                              d="M32.33 18.098q-.033.213-.076.437c-.984 5.051-4.35 6.796-8.648 6.796h-2.189c-.525 0-.968.382-1.05.9l-1.12 7.107-.318 2.015a.56.56 0 0 0 .553.647h3.881c.46 0 .85-.334.923-.787l.038-.198.731-4.638.047-.254a.934.934 0 0 1 .922-.79h.581c3.761 0 6.705-1.526 7.566-5.945.36-1.846.173-3.387-.778-4.471a3.7 3.7 0 0 0-1.062-.82"
+                              fill="#fff" fill-opacity=".6" />
+                            <path
+                              d="M31.3 17.687a8 8 0 0 0-.956-.212 12 12 0 0 0-1.93-.141h-5.846a.93.93 0 0 0-.922.789L20.402 26l-.036.23c.082-.518.525-.9 1.05-.9h2.19c4.298 0 7.664-1.746 8.648-6.796q.044-.224.076-.437a5 5 0 0 0-.809-.342z"
+                              fill="#fff" fill-opacity=".8" />
+                            <path
+                              d="M21.646 18.123a.93.93 0 0 1 .922-.788h5.847c.693 0 1.34.045 1.93.14q.252.042.492.094a8 8 0 0 1 .685.187q.435.145.809.342c.293-1.867-.002-3.138-1.012-4.289C30.207 12.542 28.2 12 25.63 12h-7.46c-.525 0-.973.382-1.054.901l-3.107 19.696a.64.64 0 0 0 .632.741h4.606l1.156-7.337z"
+                              fill="#fff" />
+                          </svg>
+                        </div>
+                      {% when 'paypalIPN' %}
+                        <div class="p-2.5 rounded-md bg-blue-500/10">
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 48 48"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <circle cx="24" cy="24" r="20" fill="#0070BA" />
+                            <path
+                              d="M32.33 18.098q-.033.213-.076.437c-.984 5.051-4.35 6.796-8.648 6.796h-2.189c-.525 0-.968.382-1.05.9l-1.12 7.107-.318 2.015a.56.56 0 0 0 .553.647h3.881c.46 0 .85-.334.923-.787l.038-.198.731-4.638.047-.254a.934.934 0 0 1 .922-.79h.581c3.761 0 6.705-1.526 7.566-5.945.36-1.846.173-3.387-.778-4.471a3.7 3.7 0 0 0-1.062-.82"
+                              fill="#fff" fill-opacity=".6" />
+                            <path
+                              d="M31.3 17.687a8 8 0 0 0-.956-.212 12 12 0 0 0-1.93-.141h-5.846a.93.93 0 0 0-.922.789L20.402 26l-.036.23c.082-.518.525-.9 1.05-.9h2.19c4.298 0 7.664-1.746 8.648-6.796q.044-.224.076-.437a5 5 0 0 0-.809-.342z"
+                              fill="#fff" fill-opacity=".8" />
+                            <path
+                              d="M21.646 18.123a.93.93 0 0 1 .922-.788h5.847c.693 0 1.34.045 1.93.14q.252.042.492.094a8 8 0 0 1 .685.187q.435.145.809.342c.293-1.867-.002-3.138-1.012-4.289C30.207 12.542 28.2 12 25.63 12h-7.46c-.525 0-.973.382-1.054.901l-3.107 19.696a.64.64 0 0 0 .632.741h4.606l1.156-7.337z"
+                              fill="#fff" />
+                          </svg>
+                        </div>
+                      {% when 'cashapp' %}
+                        <div class="p-2.5 rounded-md bg-green-500/10">
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="lime"
+                          >
+                            <path
+                              d="M23.59 3.475a5.1 5.1 0 0 0-3.05-3.05c-1.31-.42-2.5-.42-4.92-.42H8.36c-2.4 0-3.61 0-4.9.4a5.1 5.1 0 0 0-3.05 3.06C0 4.765 0 5.965 0 8.365v7.27c0 2.41 0 3.6.4 4.9a5.1 5.1 0 0 0 3.05 3.05c1.3.41 2.5.41 4.9.41h7.28c2.41 0 3.61 0 4.9-.4a5.1 5.1 0 0 0 3.06-3.06c.41-1.3.41-2.5.41-4.9v-7.25c0-2.41 0-3.61-.41-4.91m-6.17 4.63-.93.93a.5.5 0 0 1-.67.01 5 5 0 0 0-3.22-1.18c-.97 0-1.94.32-1.94 1.21 0 .9 1.04 1.2 2.24 1.65 2.1.7 3.84 1.58 3.84 3.64 0 2.24-1.74 3.78-4.58 3.95l-.26 1.2a.49.49 0 0 1-.48.39H9.63l-.09-.01a.5.5 0 0 1-.38-.59l.28-1.27a6.54 6.54 0 0 1-2.88-1.57v-.01a.48.48 0 0 1 0-.68l1-.97a.49.49 0 0 1 .67 0c.91.86 2.13 1.34 3.39 1.32 1.3 0 2.17-.55 2.17-1.42s-.88-1.1-2.54-1.72c-1.76-.63-3.43-1.52-3.43-3.6 0-2.42 2.01-3.6 4.39-3.71l.25-1.23a.48.48 0 0 1 .48-.38h1.78l.1.01c.26.06.43.31.37.57l-.27 1.37c.9.3 1.75.77 2.48 1.39l.02.02c.19.2.19.5 0 .68" />
+                          </svg>
+                        </div>
+                      {% when 'square' %}
+                        <Image alt="square logo" src="/images/square.svg" width="25" height="18"></Image>
+                      {% when 'sumup' %}
+                        <Image
+                          alt="sumup logo"
+                          src="/images/sumup.avif"
+                          class="rounded-[--radius]"
+                          width="25"
+                          height="18"
+                        >
+                        </Image>
+                      {% when 'cryptomus' %}
+                        <Image
+                          alt="cryptomus logo"
+                          src="/images/Cryptomus.webp"
+                          class="rounded-full"
+                          width="25"
+                          height="18"
+                        >
+                        </Image>
+                      {% when 'cryptoCurrency' %}
+                        <div class="p-2.5 rounded-md bg-[#F7931A]/10">
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 -0.5 34 34"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                              d="M33.254 16.13c0 8.907-7.221 16.128-16.128 16.128S.996 25.038.996 16.13C.997 7.221 8.218 0 17.125 0s16.129 7.221 16.129 16.13M21 10.136c2.244.77 3.885 1.924 3.563 4.07-.234 1.573-1.109 2.333-2.27 2.6 1.594.827 2.137 2.396 1.632 4.294-.959 2.73-3.238 2.96-6.269 2.39l-.736 2.935-1.777-.442.726-2.896q-.69-.171-1.416-.366l-.729 2.91-1.775-.441.735-2.942-3.579-.9.883-2.026s1.31.346 1.292.32c.503.124.727-.202.815-.42l1.994-7.967c.023-.376-.108-.85-.828-1.03.028-.019-1.29-.32-1.29-.32l.472-1.89 3.584.884.73-2.908 1.775.442-.714 2.85c.478.108.958.218 1.425.334l.708-2.832 1.777.441zm-4.251 4.851c1.21.321 3.844 1.02 4.303-.811.468-1.874-2.09-2.44-3.343-2.716q-.215-.048-.37-.085l-.884 3.536q.127.031.294.076m-1.371 5.693c1.45.382 4.62 1.217 5.124-.8.517-2.064-2.557-2.75-4.057-3.086q-.254-.055-.437-.1l-.976 3.896q.15.037.345.09"
+                              fill="#F7931A" />
+                          </svg>
+                        </div>
+                    {% endcase %}
+                    <span>
+                      {% case method.name %}
+                        {% when 'stripe' %}
+                          Stripe
+                        {% when 'sumup' %}
+                          Sumup
+                        {% when 'cryptomus' %}
+                          Cryptomus
+                        {% when 'cardToCrypto' %}
+                          Debit/Credit Card
+                        {% when 'paypal' %}
+                          PayPal
+                        {% when 'square' %}
+                          Square
+                        {% when 'paypalF&F' %}
+                          PayPal Friends & Family
+                        {% when 'paypalIPN' %}
+                          PayPal Friends & Family
+                        {% when 'cashapp' %}
+                          Cash App
+                        {% when 'cryptoCurrency' %}
+                          Crypto Currency
+                        {% when 'customerBalance' %}
+                          Customer Balance
+                      {% endcase %}
+                    </span>
+                  </div>
+                  <div class="flex flex-row items-center gap-2">
+                    {% if method.upcharge < 0 %}
+                      <tooltip-provider>
+                        <tooltip>
+                          <tooltip-trigger>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="14"
+                              height="14"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              class="lucide lucide-circle-help text-muted-foreground"
+                            >
+                              <circle cx="12" cy="12" r="10" />
+                              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                              <path d="M12 17h.01" />
+                            </svg>
+                          </tooltip-trigger>
+                          <tooltip-content class="max-w-[200px]">
+                            <p>
+                              Some payment methods may incur an additional fee or offer a discount. This affects your
+                              total order cost.
+                            </p>
+                          </tooltip-content>
+                        </tooltip>
+                      </tooltip-provider>
+                      <div
+                        id="upcharge-badge-{{ method.name }}"
+                        class="px-2 py-0.5 gap-1 text-[10px] text-green-500 bg-green-500/15 rounded-md flex items-center"
+                      >
+                        <price data-currency="{{currencyToUseForTotal}}" data-price="{{ method.upcharge }}"></price>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          class="lucide lucide-chevrons-down"
+                        >
+                          <path d="m7 6 5 5 5-5" />
+                          <path d="m7 13 5 5 5-5" />
+                        </svg>
+                      </div>
+                    {% elsif method.upcharge > 0 %}
+                      <div
+                        id="upcharge-badge-{{ method.name }}"
+                        class="px-2 py-0.5 gap-1 text-[10px] text-red-500 bg-red-500/10 rounded-md flex items-center"
+                      >
+                        <price data-currency="{{currencyToUseForTotal}}" data-price="{{ method.upcharge }}"></price>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          class="lucide lucide-chevrons-up"
+                        >
+                          <path d="m17 11-5-5-5 5" />
+                          <path d="m17 18-5-5-5 5" />
+                        </svg>
+                      </div>
+                    {% endif %}
+                    {% if method.name == 'customerBalance' %}
+                      <div class="px-2 py-0.5 gap-1 text-[10px] bg-green-500/10 text-green-500 rounded-md flex items-center">
+                        Balance
+                        <price data-currency="usd" data-price="{{ customer.balance }}"></price>
+                      </div>
+                    {% else %}
+                      <div class="px-2 py-0.5 gap-1 text-[10px] bg-blue-500/10 text-blue-500 rounded-md flex items-center">
+                        Total
+                        <price data-currency="{{ currencyToUseForTotal }}" data-price="{{ method.total }}"></price>
+                      </div>
+                    {% endif %}
+                    <div
+                      select-name="select-btn-{{ method.name }}"
+                      class="px-2 py-0.5 text-[10px] bg-white/10 rounded-md"
+                    >
+                      Select
+                    </div>
+                  </div>
+                </div>
+                {% if method.paymentOptions %}
+                  <accordion class="flex flex-col divide-y">
+                    <accordion-item
+                      value="paymentOptions"
+                      class="flex flex-col border-none first:rounded-t-md last:rounded-b-md overflow-hidden"
+                    >
+                      <accordion-trigger
+                        hide-chevron="true"
+                        class="px-4 py-3 flex text-xs flex-row w-full items-center justify-between bg-accent/40 tracking-wider hover:bg-accent/70 data-[state=open]:bg-accent/50"
+                      >
+                        View Accepted Payment Methods
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          class="lucide lucide-chevron-down"
+                        >
+                          <path d="m6 9 6 6 6-6" />
+                        </svg>
+                      </accordion-trigger>
+                      <accordion-content class="p-2 grid grid-cols-4 gap-2 bg-accent/20">
+                        {% for option in method.paymentOptions %}
+                          <div class="px-3 flex items-center gap-2 p-2.5 text-xs bg-black/30 rounded-md">
+                            <image
+                              width="20"
+                              height="20"
+                              src="{{ option.icon | asset_url }}"
+                              alt="{{ option.name }}"
+                              class="rounded object-cover"
+                            />
+                            <span class="text-white">
+                              {{ option.name }}
+                            </span>
+                          </div>
+                        {% endfor %}
+                      </accordion-content>
+                    </accordion-item>
+                  </accordion>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    <server-form id="invoice-form" action-name="createInvoice">
+      <input required="yes" type="hidden" name="paymentMethod" id="paymentMethod" value="">
+      <input type="hidden" name="customFields" id="customFields" value="">
+      <input type="hidden" name="referralCode" id="referral-code" value="">
+      <input type="hidden" name="localCart" id="local-cart" value="{{ localCart | escape }}">
+      <input type="hidden" name="checkoutSession" id="checkout-session" value="{{ checkoutSessionId }}">
+      {% if path != '/checkout' %}
+        <input type="hidden" name="email" id="email-input" value="{{ email }}">
+      {% endif %}
+
+      <custom-optimistic-button
+        form="invoice-form"
+        type="submit"
+        class="bg-[--accent-color] hover:bg-[--dark-accent-color] w-full"
+      >
+        <span class="text-xs font-semibold">Proceed to Payment</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
+          <title>credit-card</title><g fill="currentColor"><line x1="1.75" y1="7.25" x2="16.25" y2="7.25" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"></line><rect x="1.75" y="3.75" width="14.5" height="10.5" rx="2" ry="2" transform="translate(18 18) rotate(180)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"></rect><line x1="4.25" y1="11.25" x2="7.25" y2="11.25" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"></line><line x1="12.75" y1="11.25" x2="13.75" y2="11.25" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"></line></g>
+        </svg>
+      </custom-optimistic-button>
+    </server-form>
+    <express-checkout-frame dark-mode="true"></express-checkout-frame>
+  </div>
+  <script key="payment-script">
+    var render = () => {
+      {% if path == "/checkout" %}
+        {% for item in cart.items %}
+          {
+            let quantity = Number('{{item.quantity}}');
+            const minQuantity = Number('{{item.variant.minOrderQuantity}}') || 1;
+            const maxQuantity = Number('{{item.variant.maxOrderQuantity}}') || Infinity;
+
+            const quantityElement = document.getElementById('quantity-display-{{item.variant.id}}');
+            const incrementElement = document.getElementById('increment-item-{{item.variant.id}}');
+            const decrementElement = document.getElementById('decrement-item-{{item.variant.id}}');
+            const quantityInput = document.getElementById('quantity-item-{{item.variant.id}}');
+
+            const updateQuantity = (change) => {
+              const newQuantity = quantity + change;
+              if (newQuantity >= minQuantity && newQuantity <= maxQuantity) {
+                quantity = newQuantity;
+                quantityElement.textContent = quantity;
+                quantityInput.value = quantity;
+              }
+            };
+
+            if (quantity < minQuantity) quantity = minQuantity;
+            if (quantity > maxQuantity) quantity = maxQuantity;
+
+            if (!incrementElement.getAttribute('data-setup')) {
+              incrementElement.addEventListener('click', () => updateQuantity(1));
+              incrementElement.setAttribute('data-setup', '1');
+            }
+
+            if (!decrementElement.getAttribute('data-setup')) {
+              decrementElement.addEventListener('click', () => updateQuantity(-1));
+              decrementElement.setAttribute('data-setup', '1');
+            }
+
+            quantityElement.textContent = quantity;
+            quantityInput.value = quantity;
+          }
+          {% endfor %}
+      {% endif %}
+
+      const paymentMethods = document.querySelectorAll('[data-name]');
+      if (paymentMethods.length > 0) {
+        paymentMethods[0].click();
+      }
+
+      const selectBtns = document.querySelectorAll('[select-name]');
+      const paymentMethod = document.getElementById('paymentMethod');
+      const totalPriceElement = document.getElementById('total_price');
+      const upchargeFeeElement = document.getElementById('upcharge_fee');
+      const originalTotal = totalPriceElement.innerHTML;
+
+      const referralInput = document.getElementById('referral-input');
+      const referralCode = document.getElementById('referral-code');
+
+      if (referralInput) {
+        referralInput.defaultValue = '{{ sessionReferralCode }}';
+        referralCode.value = '{{ sessionReferralCode }}';
+        referralInput.addEventListener('input', (event) => {
+          referralCode.value = event.target.value;
+        });
+      }
+
+      const emailInput = document.getElementById('email-input');
+      const email = document.getElementById('email');
+
+      if (emailInput) {
+        emailInput.addEventListener('input', (event) => {
+          if (email?.value) {
+            email.value = event.target.value;
+          }
+        });
+      }
+
+      paymentMethods.forEach((element) => {
+        const dataName = element.getAttribute('data-name');
+        const selectBtn = document.querySelector("[select-name='select-btn-" + dataName + "']");
+
+        element.addEventListener('click', (event) => {
+          paymentMethod.value = dataName;
+
+          paymentMethods.forEach((el) => el.classList.remove('border-[--accent-color]'));
+          selectBtns.forEach((btn) => {
+            btn.classList.remove('bg-[--light-accent-color]', 'text-[--accent-color]');
+            btn.classList.add('bg-white/10');
+            btn.innerHTML = 'Select';
+          });
+
+          selectBtn.classList.remove('bg-white/10');
+          selectBtn.classList.add('bg-[--light-accent-color]', 'text-[--accent-color]');
+          selectBtn.innerHTML = 'Selected';
+          element.classList.remove('border-transparent');
+          element.classList.add('border-[--accent-color]');
+
+          const upchargeBadge = document.getElementById('upcharge-badge-' + dataName);
+          const upchargeElement = element.querySelector('[data-price]');
+          const methodTotalElement = element.querySelector('.text-blue-500 [data-price]');
+
+          if (upchargeFeeElement) {
+            const feeContainerStyle = upchargeFeeElement?.parentElement?.parentElement?.style;
+            if (methodTotalElement) {
+              const totalPrice =  parseFloat(methodTotalElement.getAttribute('data-price'));
+              totalPriceElement.innerHTML = methodTotalElement.outerHTML;
+
+
+              if (upchargeBadge && upchargeElement) {
+                const upchargeValue = parseFloat(upchargeElement.getAttribute('data-price'));
+                upchargeFeeElement.setAttribute('data-price', Math.abs(upchargeValue));
+
+                // Update parent div classes based on whether it's a fee or discount
+                const feeTextElement = upchargeFeeElement.parentElement?.previousElementSibling;
+
+                if (feeTextElement) {
+                  if (upchargeValue < 0) {
+                    upchargeFeeElement.parentElement.classList.add('text-green-500');
+                    upchargeFeeElement.parentElement.classList.remove('text-red-500');
+                    feeTextElement.textContent = 'Payment Method Discount';
+                    feeTextElement.classList.remove('text-red-500');
+                    feeTextElement.classList.add('text-green-500');
+                  } else {
+                    upchargeFeeElement.parentElement.classList.add('text-red-500');
+                    upchargeFeeElement.parentElement.classList.remove('text-green-500');
+                    feeTextElement.textContent = 'Payment Method Fee';
+                    feeTextElement.classList.remove('text-green-500');
+                    feeTextElement.classList.add('text-red-500');
+                  }
+                }
+
+                if (feeContainerStyle) {
+                  feeContainerStyle.display = upchargeValue !== 0 ? 'flex' : 'none';
+                }
+              }
+            } else {
+              totalPriceElement.innerHTML = originalTotal;
+              upchargeFeeElement.setAttribute('data-price', '0');
+              if (feeContainerStyle) {
+                feeContainerStyle.display = 'none';
+              }
+            }
+          }
+        });
+      });
+    };
+
+    render();
+  </script>
+</div>

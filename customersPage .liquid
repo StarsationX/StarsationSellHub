@@ -1,0 +1,177 @@
+<div class="bg-cover bg-center mx-auto w-full max-w-[1400px] px-4 !scroll-smooth">
+<slot data-id="1" class="min-h-[100px]">
+  <vertical-layout data-id="2a4a9a67-7276-4e3b-a150-1a03ab0fceed" data-slots="5"
+    style="gap: 24px; align-items: center; justify-content: start" data-spacing="36" data-align-items="center"
+    data-justify-items="start">
+    <div class="mt-4 flex flex-col md:flex-row gap-4 min-h-[calc(100svh-380px-70px-50px)] w-full">
+      <div class="w-full flex flex-col gap-4">
+        <div class="font-semibold text-lg">Customer Panel</div>
+        <!-- Customer Section -->
+        <div class="bg-accent/30 flex flex-col p-4 gap-4 rounded-lg">
+          <!-- Customer email and total spent -->
+          <div class="flex flex-row items-start justify-between">
+            <div class="flex flex-col gap-2 items-start">
+              <span class="text-xs text-muted-foreground/70">Viewing Orders For</span>
+              <span class="font-semibold text-sm sm:text-xl text-[--accent-color]">{{ user.email }}</span>
+            </div>
+            <div class="flex flex-col gap-2 items-end">
+              <span class="text-xs text-muted-foreground/70">Balance</span>
+              <div class="flex flex-row gap-2 items-center">
+                <span class="font-semibold text-sm sm:text-xl text-white min-w-max"><price data-currency="usd" data-price="{{balance}}"></price></span>
+          <dialog>
+          <dialog-trigger>
+            <div
+              class="px-2 py-0.5 rounded-md bg-[--light-accent-color] text-[--accent-color] font-semibold cursor-pointer">
+              +
+            </div>
+          </dialog-trigger>
+          <dialog-content>
+            <dialog-header-container>
+              <dialog-header>
+                <dialog-title>Redeem Giftcard</dialog-title>
+                <dialog-description>
+                  Enter giftcard code to add balance to your wallet.
+                </dialog-description>
+              </dialog-header>
+            </dialog-header-container>
+            <server-form action-name="redeemGiftcard">
+            <dialog-content-container>
+              <div className="grid gap-4">
+                  <div class="flex flex-col gap-2">
+                    <div class="flex flex-col gap-2">
+                      <span class="text-sm text-muted-foreground">Giftcard Code</span>
+                      <input name="giftcardCode" />
+                    </div>
+                    </div>
+                  </div>
+                  </dialog-content-container>
+                  <dialog-footer>
+                    <dialog-close>
+                      <div class="flex items-center justify-center px-3 text-sm h-8 rounded-md bg-transparent border">Cancel</div>
+                    </dialog-close>
+                    <dialog-close>
+                      <custom-optimistic-button type="submit"
+                      class="h-8 bg-[--accent-color] hover:bg-[--dark-accent-color] text-white rounded-md">
+                      Redeem
+                    </custom-optimistic-button>
+                    </dialog-close>
+                  </dialog-footer>
+                </server-form>
+                </dialog-content>
+              </dialog>
+              </div>
+            </div>
+          </div>
+          <!-- Customer information -->
+          <div class="flex flex-col gap-1 p-4 rounded-lg bg-background">
+            <div class="min-h-[28px] flex flex-row gap-4 justify-between items-center">
+              <span class="text-xs text-muted-foreground/70">Total Orders</span>
+              <span class="font-semibold text-sm text-[--accent-color]">{{ customerDetails.totalOrders }}</span>
+            </div>
+            <div class="min-h-[28px] flex flex-row gap-4 justify-between items-center">
+              <span class="text-xs text-muted-foreground/70">Total Spent</span>
+              <span class="font-semibold text-sm text-[--accent-color]"><price data-currency="usd" data-price="{{customerDetails.totalSpent}}"></price></span>
+            </div>
+            <div class="min-h-[28px] flex flex-row gap-4 justify-between items-center">
+              <span class="text-xs text-muted-foreground/70">Store</span>
+              <span class="text-sm">{{ name }}</span>
+            </div>
+            <div class="min-h-[28px] flex flex-row gap-4 justify-between items-center">
+              <span class="text-xs text-muted-foreground/70">Account Created At</span>
+              <span
+                class="text-xs text-muted-foreground uppercase">{{ customerDetails.createdAt | date: "%Y-%m-%d %I:%M %P" }}</span>
+            </div>
+            <div class="min-h-[28px] flex flex-row gap-4 justify-between items-center">
+              <span class="text-xs text-muted-foreground/70">First Order At</span>
+              <span
+                class="text-xs text-muted-foreground uppercase">{{ customerDetails.firstOrderDate | date: "%Y-%m-%d %I:%M %P" }}</span>
+            </div>
+            <div class="min-h-[28px] flex flex-row gap-4 justify-between items-center">
+              <span class="text-xs text-muted-foreground/70">Last Order At</span>
+              <span
+                class="text-xs text-muted-foreground uppercase">{{ customerDetails.lastOrderDate | date: "%Y-%m-%d %I:%M %P" }}</span>
+            </div>
+          </div>
+          <div class="font-semibold">Orders</div>
+          <!-- Orders Section -->
+          <table class="table rounded-lg sm:bg-background overflow-hidden w-full">
+            <thead class="bg-accent/60 hidden sm:table-header-group">
+              <tr class="bg-accent/60">
+                <th class="p-4 text-sm text-start">Order ID</th>
+                <th class="p-4 text-sm text-center">Created At</th>
+                <th class="p-4 text-sm text-end">Items</th>
+              </tr>
+            </thead>
+            <tbody class="flex flex-col gap-4 sm:gap-0 sm:table-row-group">
+              {% for item in orders %}
+              <tr data-href="{{ '/order/' | append: item.id }}"
+                class="hover:bg-accent/40 duration-300 cursor-pointer bg-background sm:bg-transparent rounded-lg flex flex-col sm:table-row py-2 sm:py-0">
+                <th
+                  class="flex flex-row sm:table-cell items-center justify-between gap-4 px-4 py-2 sm:py-4 font-normal text-xs text-[--dark-accent-color] text-start">
+                  <span class="inline-block sm:hidden text-xs text-muted-foreground/70 min-w-max">Order ID</span>
+                  <span class="text-end">{{ item.id }}</span>
+                </th>
+                <th
+                  class="flex flex-row sm:table-cell items-center justify-between gap-4 px-4 py-2 sm:py-4 font-normal text-xs text-center text-muted-foreground">
+                  <span class="inline-block sm:hidden text-xs text-muted-foreground/70 min-w-max">Created At</span>
+                  <span class="px-2 py-1 text-white/90 rounded-md bg-white/15 uppercase">
+                    {{ item.createdAt | date: "%Y-%m-%d %I:%M %P" }}
+                  </span>
+                </th>
+                <th
+                  class="flex flex-row sm:table-cell items-center justify-between gap-4 px-4 py-2 sm:py-4 font-normal text-sm text-end">
+                  <span class="inline-block sm:hidden text-xs text-muted-foreground/70 min-w-max">Items</span>
+                  <span>{{ item.invoiceItems.length}}</span></th>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          
+          <server-form action-name="claimRewards">
+            <div class="font-semibold mb-4 flex flex-row items-center gap-4 justify-between">
+              <span>Reward Money</span>
+              <custom-optimistic-button class="bg-[--accent-color] hover:bg-[--dark-accent-color] h-7">Claim Amount</custom-optimistic-button>
+            </div>
+            <div class="flex flex-col gap-4 p-4 rounded-lg bg-background">
+              <span class="text-sm text-muted-foreground/80">You can claim your pending reward money which you have got while spending on shop.</span> 
+              <span class="text-sm">Amount: <span class="text-[--accent-color] bg-[--light-accent-color] px-2 mx-0.5 py-1 rounded-md font-semibold"><price data-currency="usd" data-price="{{unclaimedMoney}}"></price></span></span>                    
+            </div>
+            <!-- Claim Rewards Coupon Table -->
+            <table class="mt-4 table rounded-lg sm:bg-background overflow-hidden w-full">
+              <thead class="bg-accent/60 hidden sm:table-header-group">
+                <tr class="bg-accent/60">
+                  <th class="p-4 text-sm text-start">Coupon Code</th> 
+                  <th class="p-4 text-sm text-end">Amount</th>
+                </tr>
+              </thead>
+              <tbody class="flex flex-col gap-4 sm:gap-0 sm:table-row-group">
+                {% for coupon in unusedCoupons %}
+                <tr class="hover:bg-accent/40 duration-300 cursor-pointer bg-background sm:bg-transparent rounded-lg flex flex-col sm:table-row py-2 sm:py-0">
+                  <td
+                    class="flex flex-row sm:table-cell items-center justify-between gap-4 px-4 py-2 sm:py-4 font-normal text-xs text-[--dark-accent-color] text-start">
+                    <span class="inline-block sm:hidden text-xs text-muted-foreground/70 min-w-max">Coupon</span>
+                    <span class="text-end">{{ coupon.couponCode }}</span>
+                  </td> 
+                  <td
+                    class="flex flex-row sm:table-cell items-center justify-between gap-4 px-4 py-2 sm:py-4 font-normal text-sm text-end">
+                    <span class="inline-block sm:hidden text-xs text-muted-foreground/70 min-w-max">Amount</span>
+                    <span>$\{{ coupon.couponValue }}</span></td>
+                </tr>
+                {% else %}
+                  <tr class="hover:bg-accent/40 duration-300 cursor-pointer bg-background sm:bg-transparent rounded-lg flex flex-col sm:table-row py-2 sm:py-0">
+                    <td colspan="2" class="text-center">
+                      You don't have any active coupon codes!
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </server-form>
+        </div>
+      </div>
+    </div>
+  </vertical-layout>
+  <script key="customersPage-script">{% raw %}"use strict";(()=>{async function entrypoint(){document.querySelectorAll("[data-href]").forEach(row=>{row.addEventListener("click",()=>{let href=row.getAttribute("data-href");window.location.href=href??""})})}entrypoint(/*!{% endraw %}*/decodeURIComponent(``)/*!{% raw %}*/);
+})();{% endraw %}</script>
+</slot>
+</div>

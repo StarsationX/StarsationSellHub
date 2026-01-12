@@ -1,0 +1,615 @@
+<div class="bg-cover bg-center mx-auto w-full max-w-[1400px] px-4 !scroll-smooth">
+  <slot data-id="1" class="min-h-[100px]">
+    <vertical-layout data-id="2a4a9a67-7276-4e3b-a150-1a03ab0fceed" data-slots="5"
+      style="gap: 24px; align-items: center; justify-content: start" data-spacing="36" data-align-items="center"
+      class="pt-4" data-justify-items="start">
+      <!-- Checkout ------ Payment ------ INVOICE -->
+      <div class="flex flex-row items-center">
+        <div class="px-2 py-1 rounded-full text-[10px] bg-[--accent-color] border border-[--accent-color] text-white">
+          CART
+        </div>
+        <div class="h-[1px] bg-[--accent-color] w-[10vw]"></div>
+        <div class="px-2 py-1 rounded-full text-[10px] bg-[--accent-color] border border-[--accent-color] text-white">
+          PAYMENT
+        </div>
+        <div class="h-[1px] bg-accent w-[10vw]"></div>
+        <div class="px-2 py-1 rounded-full text-[10px] bg-accent border border-accent text-white">INVOICE</div>
+      </div>
+      <div class="mt-6 flex flex-col md:flex-row gap-4 min-h-[calc(100svh-380px-70px-50px)] w-full">
+        <div class="w-full md:w-2/3 flex flex-col gap-4">
+          <div class="font-semibold text-lg">Delivery Email</div>
+          <div class="w-full bg-accent/30 p-4 rounded-lg flex flex-col gap-4">
+            <div class="flex flex-row items-center gap-4">
+              <div class="flex flex-col w-full">
+                <div class="text-sm font-medium text-muted-foreground">Email</div>
+                <input required={true} id="email-input" name="email" type="email" class="mt-2 w-full bg-accent/20 p-3"
+                  placeholder="Enter your email address" form="invoice-form" />
+
+                <p class="text-xs text-muted-foreground/70 mt-2">
+                  * Enter the email address where you want your product to be sent. You will receive the invoice in your email.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="font-semibold text-lg">Referral Code</div>
+          <div class="w-full bg-accent/30 p-4 rounded-lg flex flex-col gap-4">
+            <div class="flex flex-row items-center gap-4">
+              <div class="flex flex-col w-full">
+                <div class="text-sm font-medium text-muted-foreground">Referral Code</div>
+                <input minLength="1" id="referral-input" name="referral-input" type="text"
+                  class="mt-2 w-full bg-accent/20 p-3" placeholder="Enter the referral code">
+                <p class="text-xs text-muted-foreground/70 mt-2">
+                  Referred by someone? Type their referral code in here.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="font-semibold text-lg">Choose Payment Method</div>
+          <div class="flex flex-col gap-4" id="payment_div">
+            <!-- Payment Plugins -->
+            {% for plugin in paymentPlugins %}
+            {% if plugin.isActive %}
+            <div data-name="{{ plugin.name }}"
+              class="duration-300 border border-transparent cursor-pointer w-full px-4 hover:bg-accent/60 flex flex-1 items-center justify-between py-4 text-sm font-medium transition-all rounded-lg bg-accent/30">
+              <div class="flex flex-row items-center gap-4">
+                <Image height="20" width="20" alt="{{ plugin.name }}" src="{{ plugin.image }}"
+                  class="h-5 w-5 rounded-md object-cover"></Image>
+                <span>{{ plugin.name }}</span>
+              </div>
+              <div select-name="select-btn-{{ plugin.name }}" class="px-3 py-1 text-xs bg-white/15 rounded-md">
+                Select
+              </div>
+            </div>
+            {% endif %}
+            {% endfor %}  
+            {% for manualPaymentMethod in manualPaymentMethods %}
+            <div data-name="{{ manualPaymentMethod.name }}"
+              class="duration-300 border border-transparent cursor-pointer w-full px-4 hover:bg-accent/60 flex flex-1 items-center justify-between py-4 text-sm font-medium transition-all rounded-lg bg-accent/30">
+              <div class="flex flex-row items-center gap-4">
+                <Image height="20" width="20" alt="{{ manualPaymentMethod.name }}" src="{{ manualPaymentMethod.image }}"
+                  class="h-5 w-5 rounded-md object-cover"></Image>
+                <span>{{ manualPaymentMethod.name }}</span>
+              </div>
+              <div select-name="select-btn-{{ manualPaymentMethod.name }}"
+                class="px-3 py-1 text-xs bg-white/15 rounded-md">
+                Select
+              </div>
+            </div>
+            {% endfor %}
+            <div id="payment_method_skeletons" class="flex flex-col gap-4">
+              <skeleton class="w-full h-[58px]"></skeleton>
+              <skeleton class="w-full h-[58px]"></skeleton>
+              <skeleton class="w-full h-[58px]"></skeleton>
+              <skeleton class="w-full h-[58px]"></skeleton>
+
+            </div>
+
+            <!-- Payment Methods & Plugins -->
+            {% for method in paymentMethodInfo %}
+            <div data-name="{{ method.name }}"
+              class="duration-300 border border-transparent cursor-pointer w-full px-4 hover:bg-accent/60 flex flex-1 items-center justify-between py-4 text-sm font-medium transition-all rounded-lg bg-accent/30">
+              <div class="flex flex-col gap-4 w-full">
+                <div class="flex flex-row items-center justify-between">
+                  <div class="flex flex-row items-center gap-4">
+                    {% case method.name %}
+                    {% when 'stripe' %}
+                    <svg width="20" height="20" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="512" cy="512" r="512" style="fill:#635bff" />
+                      <path
+                        d="M781.67 515.75c0-38.35-18.58-68.62-54.08-68.62s-57.23 30.26-57.23 68.32c0 45.09 25.47 67.87 62 67.87 17.83 0 31.31-4 41.5-9.74v-30c-10.19 5.09-21.87 8.24-36.7 8.24-14.53 0-27.42-5.09-29.06-22.77h73.26c.01-1.92.31-9.71.31-13.3m-74-14.23c0-16.93 10.34-24 19.78-24 9.14 0 18.88 7 18.88 24zm-95.14-54.39a42.32 42.32 0 0 0-29.36 11.69l-1.95-9.29h-33v174.68l37.45-7.94.15-42.4c5.39 3.9 13.33 9.44 26.52 9.44 26.82 0 51.24-21.57 51.24-69.06-.12-43.45-24.84-67.12-51.05-67.12m-9 103.22c-8.84 0-14.08-3.15-17.68-7l-.15-55.58c3.9-4.34 9.29-7.34 17.83-7.34 13.63 0 23.07 15.28 23.07 34.91.01 20.03-9.28 35.01-23.06 35.01zM496.72 438.29l37.6-8.09v-30.41l-37.6 7.94zm0 11.39h37.6v131.09h-37.6zm-40.3 11.08L454 449.68h-32.34v131.08h37.45v-88.84c8.84-11.54 23.82-9.44 28.46-7.79v-34.45c-4.78-1.8-22.31-5.1-31.15 11.08m-74.91-43.59L345 425l-.15 120c0 22.17 16.63 38.5 38.8 38.5 12.28 0 21.27-2.25 26.22-4.94v-30.45c-4.79 1.95-28.46 8.84-28.46-13.33v-53.19h28.46v-31.91h-28.51zm-101.27 70.56c0-5.84 4.79-8.09 12.73-8.09a83.56 83.56 0 0 1 37.15 9.59V454a98.8 98.8 0 0 0-37.12-6.87c-30.41 0-50.64 15.88-50.64 42.4 0 41.35 56.93 34.76 56.93 52.58 0 6.89-6 9.14-14.38 9.14-12.43 0-28.32-5.09-40.9-12v35.66a103.85 103.85 0 0 0 40.9 8.54c31.16 0 52.58-15.43 52.58-42.25-.17-44.63-57.25-36.69-57.25-53.47"
+                        style="fill:#fff" />
+                    </svg>
+                    {% when 'customerBalance' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                      class="lucide lucide-wallet-minimal">
+                      <path d="M17 14h.01" />
+                      <path d="M7 7h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14" />
+                    </svg>
+                    {% when 'cardToCrypto' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 512 512"
+                      xml:space="preserve">
+                      <path style="fill:#5286f9"
+                        d="M488.727 66.494H23.273C10.42 66.494 0 76.914 0 89.767v332.466c0 12.853 10.42 23.273 23.273 23.273h465.454c12.853 0 23.273-10.42 23.273-23.273V89.767c0-12.853-10.42-23.273-23.273-23.273" />
+                      <path style="fill:#ffb655"
+                        d="M273.776 189.773c5.115 5.86 9.57 12.31 13.236 19.242a100.2 100.2 0 0 1 11.655 46.986c0 16.96-4.228 32.943-11.655 46.986a101.3 101.3 0 0 1-13.236 19.24A101.6 101.6 0 0 1 256 338.296c16.454 11.664 36.523 18.553 58.182 18.553 55.608 0 100.849-45.241 100.849-100.848S369.79 155.152 314.182 155.152c-21.659 0-41.728 6.886-58.182 18.553a101.8 101.8 0 0 1 17.776 16.068" />
+                      <path style="fill:#d8143a"
+                        d="M287.012 209.016a101.2 101.2 0 0 0-13.236-19.242A101.7 101.7 0 0 0 256 173.708c-16.452-11.667-36.523-18.553-58.182-18.553-55.608 0-100.848 45.241-100.848 100.848s45.241 100.848 100.848 100.848c21.659 0 41.73-6.887 58.182-18.553a101.7 101.7 0 0 0 17.776-16.067c5.115-5.86 9.57-12.31 13.236-19.24a100.2 100.2 0 0 0 11.655-46.986 100.2 100.2 0 0 0-11.655-46.989" />
+                      <path style="fill:#3d6deb"
+                        d="M197.818 356.851c-55.608 0-100.848-45.241-100.848-100.848s45.241-100.848 100.848-100.848c21.659 0 41.728 6.886 58.182 18.553V66.494H23.273C10.42 66.494 0 76.914 0 89.767v332.466c0 12.853 10.42 23.273 23.273 23.273H256v-107.21c-16.454 11.666-36.523 18.555-58.182 18.555" />
+                    </svg>
+                    {% when 'paypal' %}
+                    <svg width="20" height="20" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="24" cy="24" r="20" fill="#0070BA" />
+                      <path
+                        d="M32.33 18.098q-.033.213-.076.437c-.984 5.051-4.35 6.796-8.648 6.796h-2.189c-.525 0-.968.382-1.05.9l-1.12 7.107-.318 2.015a.56.56 0 0 0 .553.647h3.881c.46 0 .85-.334.923-.787l.038-.198.731-4.638.047-.254a.934.934 0 0 1 .922-.79h.581c3.761 0 6.705-1.526 7.566-5.945.36-1.846.173-3.387-.778-4.471a3.7 3.7 0 0 0-1.062-.82"
+                        fill="#fff" fill-opacity=".6" />
+                      <path
+                        d="M31.3 17.687a8 8 0 0 0-.956-.212 12 12 0 0 0-1.93-.141h-5.846a.93.93 0 0 0-.922.789L20.402 26l-.036.23c.082-.518.525-.9 1.05-.9h2.19c4.298 0 7.664-1.746 8.648-6.796q.044-.224.076-.437a5 5 0 0 0-.809-.342z"
+                        fill="#fff" fill-opacity=".8" />
+                      <path
+                        d="M21.646 18.123a.93.93 0 0 1 .922-.788h5.847c.693 0 1.34.045 1.93.14q.252.042.492.094a8 8 0 0 1 .685.187q.435.145.809.342c.293-1.867-.002-3.138-1.012-4.289C30.207 12.542 28.2 12 25.63 12h-7.46c-.525 0-.973.382-1.054.901l-3.107 19.696a.64.64 0 0 0 .632.741h4.606l1.156-7.337z"
+                        fill="#fff" />
+                    </svg>
+                    {% when 'paypalF&F' %}
+                    <svg width="20" height="20" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="24" cy="24" r="20" fill="#0070BA" />
+                      <path
+                        d="M32.33 18.098q-.033.213-.076.437c-.984 5.051-4.35 6.796-8.648 6.796h-2.189c-.525 0-.968.382-1.05.9l-1.12 7.107-.318 2.015a.56.56 0 0 0 .553.647h3.881c.46 0 .85-.334.923-.787l.038-.198.731-4.638.047-.254a.934.934 0 0 1 .922-.79h.581c3.761 0 6.705-1.526 7.566-5.945.36-1.846.173-3.387-.778-4.471a3.7 3.7 0 0 0-1.062-.82"
+                        fill="#fff" fill-opacity=".6" />
+                      <path
+                        d="M31.3 17.687a8 8 0 0 0-.956-.212 12 12 0 0 0-1.93-.141h-5.846a.93.93 0 0 0-.922.789L20.402 26l-.036.23c.082-.518.525-.9 1.05-.9h2.19c4.298 0 7.664-1.746 8.648-6.796q.044-.224.076-.437a5 5 0 0 0-.809-.342z"
+                        fill="#fff" fill-opacity=".8" />
+                      <path
+                        d="M21.646 18.123a.93.93 0 0 1 .922-.788h5.847c.693 0 1.34.045 1.93.14q.252.042.492.094a8 8 0 0 1 .685.187q.435.145.809.342c.293-1.867-.002-3.138-1.012-4.289C30.207 12.542 28.2 12 25.63 12h-7.46c-.525 0-.973.382-1.054.901l-3.107 19.696a.64.64 0 0 0 .632.741h4.606l1.156-7.337z"
+                        fill="#fff" />
+                    </svg>
+                    {% when 'paypalIPN' %}
+                    <svg width="20" height="20" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="24" cy="24" r="20" fill="#0070BA" />
+                      <path
+                        d="M32.33 18.098q-.033.213-.076.437c-.984 5.051-4.35 6.796-8.648 6.796h-2.189c-.525 0-.968.382-1.05.9l-1.12 7.107-.318 2.015a.56.56 0 0 0 .553.647h3.881c.46 0 .85-.334.923-.787l.038-.198.731-4.638.047-.254a.934.934 0 0 1 .922-.79h.581c3.761 0 6.705-1.526 7.566-5.945.36-1.846.173-3.387-.778-4.471a3.7 3.7 0 0 0-1.062-.82"
+                        fill="#fff" fill-opacity=".6" />
+                      <path
+                        d="M31.3 17.687a8 8 0 0 0-.956-.212 12 12 0 0 0-1.93-.141h-5.846a.93.93 0 0 0-.922.789L20.402 26l-.036.23c.082-.518.525-.9 1.05-.9h2.19c4.298 0 7.664-1.746 8.648-6.796q.044-.224.076-.437a5 5 0 0 0-.809-.342z"
+                        fill="#fff" fill-opacity=".8" />
+                      <path
+                        d="M21.646 18.123a.93.93 0 0 1 .922-.788h5.847c.693 0 1.34.045 1.93.14q.252.042.492.094a8 8 0 0 1 .685.187q.435.145.809.342c.293-1.867-.002-3.138-1.012-4.289C30.207 12.542 28.2 12 25.63 12h-7.46c-.525 0-.973.382-1.054.901l-3.107 19.696a.64.64 0 0 0 .632.741h4.606l1.156-7.337z"
+                        fill="#fff" />
+                    </svg>
+                    {% when 'cashapp' %}
+                    <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="lime">
+                      <path
+                        d="M23.59 3.475a5.1 5.1 0 0 0-3.05-3.05c-1.31-.42-2.5-.42-4.92-.42H8.36c-2.4 0-3.61 0-4.9.4a5.1 5.1 0 0 0-3.05 3.06C0 4.765 0 5.965 0 8.365v7.27c0 2.41 0 3.6.4 4.9a5.1 5.1 0 0 0 3.05 3.05c1.3.41 2.5.41 4.9.41h7.28c2.41 0 3.61 0 4.9-.4a5.1 5.1 0 0 0 3.06-3.06c.41-1.3.41-2.5.41-4.9v-7.25c0-2.41 0-3.61-.41-4.91m-6.17 4.63-.93.93a.5.5 0 0 1-.67.01 5 5 0 0 0-3.22-1.18c-.97 0-1.94.32-1.94 1.21 0 .9 1.04 1.2 2.24 1.65 2.1.7 3.84 1.58 3.84 3.64 0 2.24-1.74 3.78-4.58 3.95l-.26 1.2a.49.49 0 0 1-.48.39H9.63l-.09-.01a.5.5 0 0 1-.38-.59l.28-1.27a6.54 6.54 0 0 1-2.88-1.57v-.01a.48.48 0 0 1 0-.68l1-.97a.49.49 0 0 1 .67 0c.91.86 2.13 1.34 3.39 1.32 1.3 0 2.17-.55 2.17-1.42s-.88-1.1-2.54-1.72c-1.76-.63-3.43-1.52-3.43-3.6 0-2.42 2.01-3.6 4.39-3.71l.25-1.23a.48.48 0 0 1 .48-.38h1.78l.1.01c.26.06.43.31.37.57l-.27 1.37c.9.3 1.75.77 2.48 1.39l.02.02c.19.2.19.5 0 .68" />
+                    </svg>
+                    {% when 'square' %}
+                    <Image alt="square logo" src="/images/square.svg" width="25" height="18"></Image>
+                    {% when 'sumup' %}
+                    <Image alt="sumup logo" src="/images/sumup.avif" class="rounded-[--radius]" width="25" height="18">
+                    </Image>
+                    {% when 'cryptomus' %}
+                    <Image alt="cryptomus logo" src="/images/Cryptomus.webp" class="rounded-full" width="25"
+                      height="18">
+                    </Image>
+                    {% when 'cryptoCurrency' %}
+                      <svg width="20" height="20" viewBox="0 0 125 125" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M54.973 14.852C58.323 16.75 61.25 18.499 63 22h2l2.188-2.25c6.907-6.754 13.587-8.054 23.027-8.065 8.762.18 14.653 3.444 20.992 9.315 6.663 7.433 8.175 14.896 8.066 24.613-.695 8.619-4.706 15.8-11.273 21.387-4.43 2.744-8.895 4.885-14 6l.5 2.75c1.416 10.46 1.197 19.676-5.113 28.508-5.674 6.819-11.893 11.217-20.903 12.078-9.47.099-16.175-1.078-24.234-6.023-7.066-7.263-10.541-14.687-10.5-24.876l-.016-3.878c.249-3.328.825-5.58 2.266-8.559l-3.937-.625c-8.128-1.84-14.199-6.472-18.844-13.324-4.799-8.074-5.74-16.61-3.563-25.828C12.644 24.863 18.22 18.303 26 14c9.282-3.665 19.94-3.387 28.973.852" fill="#E53A51"/>
+                        <path d="M103.012 14.68c7.404 4.917 12.815 10.591 15.597 19.207 1.842 9.961.509 18.91-5.082 27.332C108.611 67.449 101.821 71.487 94 73c-9.79.954-17.648-.978-25.312-7.25-7.134-6.745-10.638-14.277-11.063-24.125C57.734 35.96 59.322 31.918 62 27l.84-1.902c3-6.32 8.658-9.683 14.992-12.243 8.094-2.185 17.685-2.212 25.18 1.825" fill="#FEA91C"/>
+                        <path d="M54.977 14.863c3.643 2.047 6.195 3.945 8.586 7.387.593 3.73-.69 5.674-2.52 8.883C56.846 38.647 58.93 48.106 61 56l-1.906.445C48.828 59.135 42.844 64.235 37 73c-9.403-1.139-16.384-4.38-22.375-11.875C9.167 53.075 7.971 45.721 9 36c2.06-8.722 7.077-14.958 14.063-20.375 9.764-5.401 21.847-5.528 31.914-.762" fill="#488CF6"/>
+                        <path d="M109 20c5.268 3.512 7.718 7.943 9.59 13.867 1.912 9.94.515 18.948-5.063 27.352C108.611 67.449 101.821 71.487 94 73c-9.293.906-17.31-.737-24.625-6.75L67 64c3 0 3 0 5.73.977 7.236 2.264 16.203 2.317 23.27-.602 2.084-1.092 2.084-1.092 4-2.375l1.922-1.25c5.11-3.843 8.304-8.616 10.078-14.75.96-9.008.428-17.511-3-26" fill="#F07C17"/>
+                        <path d="M89 73h4c3.222 8.86 3.262 18.043-.668 26.68C87.641 107.852 81.118 113.429 72 116c-10.671 1.02-19.146-.057-28.062-6.062C42 108 42 108 41 105c2.797 1.102 5.453 2.236 8.125 3.625 6.694 2.825 13.797 1.99 20.563-.187 7.834-3.19 13.167-7.898 16.62-15.641 1.611-4.186 2.002-8.05 2.254-12.484l.131-2.127Q88.851 75.593 89 73" fill="#D3052B"/>
+                        <path d="m83 25 3 1v4h2v-5h3v5l2.375.313C96 31 96 31 98 34c-.094 1.973-.094 1.973-.5 4.063L97 42l2 2c.479 3.672.474 5.356-1.75 8.375C95 54 95 54 91 54v4h-3v-4h-2v4h-4v-4h-4v-3h4V33h-4l1-4h3z" fill="#FFF9F0"/>
+                        <path d="M64 68c3.294 3.142 6.006 6.172 8.375 10.063l1.586 2.535C75 83 75 83 74.895 85.128 73.144 88.792 69.657 90.526 66 92c-4.742-.664-8.145-3.246-12-6 1.353-4.741 3.334-8.323 6.125-12.375l2.195-3.21z" fill="#FEF9FA"/>
+                        <path d="m37 27 3 1-1 10 2.313-1.562c.886-.475 1.773-.95 2.687-1.438l3 1c-1.503 4.208-4.233 5.803-8 8h-2l-1 9h15l-1 4H32c-1-5-1-5-1-8h-3c.25-1.812.25-1.812 1-4l1.941-1.191c2.974-2.613 3.064-5.093 3.747-8.934C35.934 28.066 35.934 28.066 37 27" fill="#EDF3FE"/>
+                        <path d="M109 20c4.776 3.623 5.927 8.346 7 14 1.223 9.672-.468 16.939-6 25-5.38 6.369-12.404 10.286-20.695 11.344-6.545.223-13.3-.626-19.305-3.344-1.812-2.11-1.812-2.11-3-4l3.563 1.5c7.97 2.631 17.579 3.091 25.437-.125 2.084-1.092 2.084-1.092 4-2.375l1.922-1.25c5.11-3.843 8.304-8.616 10.078-14.75.96-9.008.428-17.511-3-26" fill="#F79118"/>
+                        <path d="M51 16v2l-3.367-.395c-10.97-1.093-17.67-.4-26.508 6.708C14.937 32.139 13.836 38.995 15 49c1.273 4.314 2.807 7.807 6 11l-1 3c-5.831-6.462-8.57-12.102-8.437-20.937l.02-2.13c.226-7.3 2.121-11.343 6.855-16.683L21 21l2.25-2.125C31.442 13.289 41.885 11.885 51 16" fill="#5A99F6"/>
+                        <path d="m54 88 1.793 1.129 2.395 1.433 2.355 1.442c3.016 1.223 4.39.98 7.457-.004 2.015-.93 2.015-.93 3.813-2.062 1.051-.64 2.103-1.28 3.187-1.938-1.544 3.288-3.396 6.247-5.437 9.25l-1.81 2.703L66 102h-3a72 72 0 0 1-4.687-5.875l-1.26-1.684C54 90.281 54 90.281 54 88" fill="#FCEEF0"/>
+                        <path d="M16 62c5.632 1.834 5.632 1.834 8.281 3.031 3.23 1.151 6.114 1.387 9.532 1.594l3.519.227L40 67l-3 6c-7.531-.912-13.168-3.06-19-8z" fill="#3B7EE4"/>
+                        <path d="M86 44h8c.625 2.375.625 2.375 1 5-2 2-2 2-5.625 2.125L86 51z" fill="#FFAE28"/>
+                        <path d="M86 33c5.75-.125 5.75-.125 8 1v5c-2.709 1.354-5.01 1.065-8 1z" fill="#FFAF2B"/>
+                        <path d="M74 87c-1.026 2.704-1.973 3.978-4.25 5.813-3.499 1.51-5.13 1.318-8.75.187-2.875-2.062-2.875-2.062-5-4 4 0 4 0 6.875 1.25 3.27 1.164 3.27 1.164 6.375-1.125C72 87 72 87 74 87" fill="#E84E63"/>
+                      </svg>
+                      
+                    {% endcase %}
+                    <span>
+                      {% case method.name %}
+                      {% when 'stripe' %}
+                      Stripe
+                      {% when 'sumup' %}
+                      Sumup
+                      {% when 'cryptomus' %}
+                      Cryptomus
+                      {% when 'cardToCrypto' %}
+                      Debit/Credit Card
+                      {% when 'paypal' %}
+                      PayPal
+                      {% when 'square' %}
+                      Square
+                      {% when 'paypalF&F' %}
+                      PayPal Friends & Family
+                      {% when 'paypalIPN' %}
+                      PayPal Friends & Family
+                      {% when 'cashapp' %}
+                      Cash App
+                      {% when 'cryptoCurrency' %}
+                      Crypto Currency
+                      {% when 'customerBalance' %}
+                      Customer Balance
+                      {% endcase %}
+                    </span>
+                  </div>
+                  <div class="flex flex-row items-center gap-2">
+                    {% if method.upcharge < 0 %} <tooltip-provider>
+                      <tooltip>
+                        <tooltip-trigger>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-circle-help">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                            <path d="M12 17h.01" />
+                          </svg>
+                        </tooltip-trigger>
+                        <tooltip-content class="max-w-[200px]">
+                          <p>
+                            Some payment methods may incur an additional fee or offer a discount. This affects your
+                            total order cost.
+                          </p>
+                        </tooltip-content>
+                      </tooltip>
+                      </tooltip-provider>
+                      <div class="px-3 py-1 gap-1 text-xs text-green-500 bg-green-500/15 rounded-md flex items-center">
+                        <price data-currency="{{currencyToUseForTotal}}" id="upcharge-element"
+                          data-price="{{ method.upcharge }}"></price>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                          class="lucide lucide-chevrons-down">
+                          <path d="m7 6 5 5 5-5" />
+                          <path d="m7 13 5 5 5-5" />
+                        </svg>
+                      </div>
+                      {% elsif method.upcharge > 0 %}
+                      <div class="px-3 py-1 gap-1 text-xs text-red-500 bg-red-500/15 rounded-md flex items-center">
+                        <price data-currency="{{currencyToUseForTotal}}" id="upcharge-element"
+                          data-price="{{ method.upcharge }}"></price>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                          class="lucide lucide-chevrons-up">
+                          <path d="m17 11-5-5-5 5" />
+                          <path d="m17 18-5-5-5 5" />
+                        </svg>
+                      </div>
+                      {% endif %}
+                      {% if method.name == 'customerBalance' %}
+                      <div class="px-3 py-1 gap-1 text-xs bg-green-500/20 text-green-500 rounded-md flex items-center">
+                        Balance
+                        <price data-currency="usd" data-price="{{ customer.balance }}"></price>
+                      </div>
+                      {% else %}
+                      <div class="px-3 py-1 gap-1 text-xs bg-blue-500/20 text-blue-500 rounded-md flex items-center">
+                        Total
+                        <price data-currency="{{ currencyToUseForTotal }}" data-price="{{ method.total }}"></price>
+                      </div>
+                      {% endif %}
+                      <div select-name="select-btn-{{ method.name }}" class="px-3 py-1 text-xs bg-white/15 rounded-md">
+                        Select
+                      </div>
+                  </div>
+                </div>
+                {% if method.paymentOptions %}
+
+                <accordion class="flex flex-col divide-y">
+                  <accordion-item value="paymentOptions"
+                    class="flex flex-col border-none first:rounded-t-md last:rounded-b-md overflow-hidden">
+                    <accordion-trigger hide-chevron="true"
+                      class="px-4 py-3 flex text-xs flex-row w-full items-center justify-between bg-accent/40 tracking-wider hover:bg-accent/70 data-[state=open]:bg-accent/50">
+                      View Accepted Payment Methods
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-chevron-down">
+                        <path d="m6 9 6 6 6-6"></path>
+                      </svg>
+                    </accordion-trigger>
+                    <accordion-content class="p-2 grid grid-cols-4 gap-2 bg-accent/20">
+                      {% for option in method.paymentOptions %}
+                      <div class="px-3 flex items-center gap-2 p-2.5 text-xs bg-black/30 rounded-md">
+                        <image width="20" height="20" src="{{ option.icon | asset_url }}" alt="{{ option.name }}"
+                          class="rounded object-cover"></image>
+                        {{ option.name }}
+                      </div>
+                      {% endfor %}
+                    </accordion-content>
+                  </accordion-item>
+                </accordion>
+                {% endif %}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        <!-- Payment Section -->
+        <div class="w-full md:w-1/3 flex flex-col gap-4">
+          <div class="font-semibold text-lg">Order Summary</div>
+          <div class="w-full flex flex-col gap-4">
+            <div id="cart-products-list" class="bg-accent/30 p-4 gap-4 rounded-lg flex flex-col">
+              <skeleton id="cart-skeleton" class="w-full h-[60px]">
+
+              </skeleton>
+            </div>
+          </div>
+          <div class="bg-accent/30 p-4 rounded-lg">
+            <div class="w-full flex items-center gap-2">
+              <input id="coupon-input" name="coupon" type="text" class="w-full bg-accent/20 p-3"
+                placeholder="Enter coupon code">
+              <custom-optimistic-button id="apply-coupon-button" type="submit"
+                class="w-fit bg-accent hover:bg-accent/80 !space-x-0" variant="outline">
+                <svg id="apply-coupon-button-arrow" width="14" height="14" viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="m17.707 9.293-5-5a.999.999 0 1 0-1.414 1.414L14.586 9H3a1 1 0 1 0 0 2h11.586l-3.293 3.293a.999.999 0 1 0 1.414 1.414l5-5a1 1 0 0 0 0-1.414"
+                    fill="currentColor" />
+                </svg>
+              </custom-optimistic-button>
+            </div>
+          </div>
+          <div class="bg-accent/30 p-4 gap-2 rounded-lg flex flex-col">
+            <div class="gap-4 flex flex-row items-center justify-between">
+              <div class="text-muted-foreground/70 text-xs">Subtotal</div>
+              <div id="subtotal_price" class="text-xs text-muted-foreground text-white font-semibold">
+                <price
+                  id="subtotal_price_tag"
+                  data-currency="{{ currencyToUseForTotal }}"
+                  data-price="{{ subtotal }}"
+                ></price>
+              </div>
+            </div>
+            <div id="bulk_discount_container" class="gap-4 flex flex-row items-center justify-between hidden">
+              <div class="text-blue-500 text-xs">Bulk Discount</div>
+              <div id="bulk_discount" class="text-xs text-blue-500 font-semibold">
+                <price
+                  id="bulk_discount_tag"
+                  data-currency="{{ currencyToUseForTotal }}"
+                  data-price="-0"
+                ></price>
+              </div>
+            </div>
+            <div id="coupon_discount_container" class="gap-4 flex flex-row items-center justify-between hidden">
+              <div class="text-green-500 text-xs">Coupon Discount</div>
+              <div id="coupon_discount" class="text-xs text-green-500 font-semibold">
+                <price
+                  id="coupon_discount_tag"
+                  data-currency="{{ currencyToUseForTotal }}"
+                  data-price="-0"
+                ></price>
+              </div>
+            </div>
+            <!-- Product Seprator -->
+            <div class="w-full h-[1px] bg-accent my-2"></div>
+            <div class="gap-4 flex flex-row items-center justify-between">
+              <div class="text-muted-foreground/70 text-sm">Payment Method Fee</div>
+              <div class="text-xs text-muted-foreground text-white font-semibold">
+                <price id="upcharge_fee" data-currency="{{ currencyToUseForTotal }}" data-price="0"></price>
+              </div>
+            </div>
+            <div class="gap-4 flex flex-row items-center justify-between">
+              <div class="font-semibold text-muted-foreground/70 text-sm">Total</div>
+              <div id="total_price" class="text-sm font-semibold text-white">
+                <price
+                  id="total_price_tag"
+                  data-currency="{{ currencyToUseForTotal }}"
+                  data-price="{{ total }}"
+                ></price>
+              </div>
+            </div>
+          </div>
+          <server-form id="invoice-form" action-name="createInvoice">
+            <input required="yes" type="hidden" name="paymentMethod" id="paymentMethod" value="">
+            <input type="hidden" name="customFields" id="customFields" value="">
+            <input type="hidden" name="referralCode" id="referral-code" value="">
+            <input type="hidden" name="localCart" id="local-cart" value="">
+            <input type="hidden" name="cryptoCurrency" id="cryptoCurrency" value="">
+
+            <custom-optimistic-button form="invoice-form" type="submit"
+              class="bg-[--accent-color] hover:bg-[--dark-accent-color] w-full">
+              <span>Proceed to Payment</span>
+              <svg width="16" height="16" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="m17.707 9.293-5-5a.999.999 0 1 0-1.414 1.414L14.586 9H3a1 1 0 1 0 0 2h11.586l-3.293 3.293a.999.999 0 1 0 1.414 1.414l5-5a1 1 0 0 0 0-1.414"
+                  fill="currentColor" />
+              </svg>
+            </custom-optimistic-button>
+          </server-form>
+          <express-checkout-frame dark-mode="true"></express-checkout-frame>
+        </div>
+      </div>
+    </vertical-layout>
+  </slot>
+
+  <script key="paymentPage-script">{% raw %}"use strict";(()=>{var __defProp=Object.defineProperty;var __getOwnPropNames=Object.getOwnPropertyNames;var __esm=(fn,res)=>function(){return fn&&(res=(0,fn[__getOwnPropNames(fn)[0]])(fn=0)),res};var __export=(target,all)=>{for(var name in all)__defProp(target,name,{get:all[name],enumerable:!0})};function withErrorHandling(fn){try{return fn()}catch(e){console.error(e)}}var init_withErrorHandling=__esm({"packages/cli/src/clientCode/withErrorHandling.ts"(){"use strict"}});async function getCartData({localCartStorage}){return withErrorHandling(async()=>{let cartResponse=await fetch("/api/getCart",{method:"POST",body:JSON.stringify(localCartStorage)});if(!cartResponse.ok)throw new Error("Failed to fetch cart");return await cartResponse.json()})??{items:[],bundles:[]}}async function isCouponValid({params}){return withErrorHandling(async()=>{let textResponse=await(await fetch("/api/isCouponValid",{method:"POST",body:JSON.stringify(params)})).text(),result=JSON.parse(textResponse);return result.success?{success:!0,coupon:result.coupon}:{success:!1,error:result.error}})??{success:!1,error:"Failed to check coupon"}}async function getEnabledPaymentMethods(couponsUsed){return withErrorHandling(async()=>(await fetch("/api/getEnabledPaymentMethods",{method:"POST",body:JSON.stringify({couponsUsed})})).json())??{enabledPaymentMethods:[]}}var init_cartAPI=__esm({"packages/cli/src/clientCode/cart/_components/cartAPI.ts"(){"use strict";init_withErrorHandling()}});function setLayoutCartCount(cartCount){let cartCountSpan=document.getElementById("cart-count");cartCountSpan&&(cartCountSpan.innerText=cartCount.toString())}var init_setLayoutCartCount=__esm({"packages/utilities/dist/stores/setLayoutCartCount.js"(){"use strict"}});function computeSubtotal(cartItems,bundlePrices){let sum=0;for(let cItem of cartItems){let itemSubtotal=parseFloat(cItem.variant.price)*cItem.quantity;sum+=itemSubtotal}for(let bp of bundlePrices)sum+=bp;return sum}function calculateAddonTotalPrice(cartItems){let sum=0;for(let cItem of cartItems)for(let addon of cItem.addons??[])sum+=parseFloat(addon.price);return sum}function setDOMPriceValue(parent,priceValue){if(!parent)return;let priceTag=parent.querySelector("span");priceTag&&priceTag.setAttribute("data-price",priceValue.toFixed(2))}function getTotalCartPrice({rawSubtotal,bulkDiscount,couponDiscount,rawAddonTotal,upchargeFeeElement,cartItemsQty,bundleCount}){let total=rawSubtotal-bulkDiscount-couponDiscount+rawAddonTotal;if(upchargeFeeElement){let upchargeVal=parseFloat(upchargeFeeElement.getAttribute("data-price")||"0");total+=upchargeVal*(cartItemsQty+bundleCount)}return total<0?0:total}var init_cartUtils=__esm({"packages/cli/src/clientCode/cart/_components/cartUtils.ts"(){"use strict"}});function getMethodDisplayName(methodName){switch(methodName){case"stripe":return"Stripe";case"sumup":return"Sumup";case"cryptomus":return"Cryptomus";case"cardToCrypto":return"Debit/Credit Card";case"paypal":return"PayPal";case"square":return"Square";case"paypalF&F":case"paypalIPN":return"PayPal Friends & Family";case"cashapp":return"Cash App";case"cryptoCurrency":return"Crypto Currency";case"customerBalance":return"Customer Balance";default:return methodName}}function getMethodIcon(methodName){switch(methodName){case"stripe":return`
+                    <svg width="20" height="20" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="512" cy="512" r="512" style="fill:#635bff" />
+                      <path
+                        d="M781.67 515.75c0-38.35-18.58-68.62-54.08-68.62s-57.23 30.26-57.23 68.32c0 45.09 25.47 67.87 62 67.87 17.83 0 31.31-4 41.5-9.74v-30c-10.19 5.09-21.87 8.24-36.7 8.24-14.53 0-27.42-5.09-29.06-22.77h73.26c.01-1.92.31-9.71.31-13.3m-74-14.23c0-16.93 10.34-24 19.78-24 9.14 0 18.88 7 18.88 24zm-95.14-54.39a42.32 42.32 0 0 0-29.36 11.69l-1.95-9.29h-33v174.68l37.45-7.94.15-42.4c5.39 3.9 13.33 9.44 26.52 9.44 26.82 0 51.24-21.57 51.24-69.06-.12-43.45-24.84-67.12-51.05-67.12m-9 103.22c-8.84 0-14.08-3.15-17.68-7l-.15-55.58c3.9-4.34 9.29-7.34 17.83-7.34 13.63 0 23.07 15.28 23.07 34.91.01 20.03-9.28 35.01-23.06 35.01zM496.72 438.29l37.6-8.09v-30.41l-37.6 7.94zm0 11.39h37.6v131.09h-37.6zm-40.3 11.08L454 449.68h-32.34v131.08h37.45v-88.84c8.84-11.54 23.82-9.44 28.46-7.79v-34.45c-4.78-1.8-22.31-5.1-31.15 11.08m-74.91-43.59L345 425l-.15 120c0 22.17 16.63 38.5 38.8 38.5 12.28 0 21.27-2.25 26.22-4.94v-30.45c-4.79 1.95-28.46 8.84-28.46-13.33v-53.19h28.46v-31.91h-28.51zm-101.27 70.56c0-5.84 4.79-8.09 12.73-8.09a83.56 83.56 0 0 1 37.15 9.59V454a98.8 98.8 0 0 0-37.12-6.87c-30.41 0-50.64 15.88-50.64 42.4 0 41.35 56.93 34.76 56.93 52.58 0 6.89-6 9.14-14.38 9.14-12.43 0-28.32-5.09-40.9-12v35.66a103.85 103.85 0 0 0 40.9 8.54c31.16 0 52.58-15.43 52.58-42.25-.17-44.63-57.25-36.69-57.25-53.47"
+                        style="fill:#fff" />
+                    </svg>
+      `;case"customerBalance":return`
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                      class="lucide lucide-wallet-minimal">
+                      <path d="M17 14h.01" />
+                      <path d="M7 7h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14" />
+                    </svg>
+      `;case"cardToCrypto":return`
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 512 512"
+                      xml:space="preserve">
+                      <path style="fill:#5286f9"
+                        d="M488.727 66.494H23.273C10.42 66.494 0 76.914 0 89.767v332.466c0 12.853 10.42 23.273 23.273 23.273h465.454c12.853 0 23.273-10.42 23.273-23.273V89.767c0-12.853-10.42-23.273-23.273-23.273" />
+                      <path style="fill:#ffb655"
+                        d="M273.776 189.773c5.115 5.86 9.57 12.31 13.236 19.242a100.2 100.2 0 0 1 11.655 46.986c0 16.96-4.228 32.943-11.655 46.986a101.3 101.3 0 0 1-13.236 19.24A101.6 101.6 0 0 1 256 338.296c16.454 11.664 36.523 18.553 58.182 18.553 55.608 0 100.849-45.241 100.849-100.848S369.79 155.152 314.182 155.152c-21.659 0-41.728 6.886-58.182 18.553a101.8 101.8 0 0 1 17.776 16.068" />
+                      <path style="fill:#d8143a"
+                        d="M287.012 209.016a101.2 101.2 0 0 0-13.236-19.242A101.7 101.7 0 0 0 256 173.708c-16.452-11.667-36.523-18.553-58.182-18.553-55.608 0-100.848 45.241-100.848 100.848s45.241 100.848 100.848 100.848c21.659 0 41.73-6.887 58.182-18.553a101.7 101.7 0 0 0 17.776-16.067c5.115-5.86 9.57-12.31 13.236-19.24a100.2 100.2 0 0 0 11.655-46.986 100.2 100.2 0 0 0-11.655-46.989" />
+                      <path style="fill:#3d6deb"
+                        d="M197.818 356.851c-55.608 0-100.848-45.241-100.848-100.848s45.241-100.848 100.848-100.848c21.659 0 41.728 6.886 58.182 18.553V66.494H23.273C10.42 66.494 0 76.914 0 89.767v332.466c0 12.853 10.42 23.273 23.273 23.273H256v-107.21c-16.454 11.666-36.523 18.555-58.182 18.555" />
+                    </svg>
+      `;case"paypal":case"paypalF&F":case"paypalIPN":return`
+                    <svg width="20" height="20" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="24" cy="24" r="20" fill="#0070BA" />
+                      <path
+                        d="M32.33 18.098q-.033.213-.076.437c-.984 5.051-4.35 6.796-8.648 6.796h-2.189c-.525 0-.968.382-1.05.9l-1.12 7.107-.318 2.015a.56.56 0 0 0 .553.647h3.881c.46 0 .85-.334.923-.787l.038-.198.731-4.638.047-.254a.934.934 0 0 1 .922-.79h.581c3.761 0 6.705-1.526 7.566-5.945.36-1.846.173-3.387-.778-4.471a3.7 3.7 0 0 0-1.062-.82"
+                        fill="#fff" fill-opacity=".6" />
+                      <path
+                        d="M31.3 17.687a8 8 0 0 0-.956-.212 12 12 0 0 0-1.93-.141h-5.846a.93.93 0 0 0-.922.789L20.402 26l-.036.23c.082-.518.525-.9 1.05-.9h2.19c4.298 0 7.664-1.746 8.648-6.796q.044-.224.076-.437a5 5 0 0 0-.809-.342z"
+                        fill="#fff" fill-opacity=".8" />
+                      <path
+                        d="M21.646 18.123a.93.93 0 0 1 .922-.788h5.847c.693 0 1.34.045 1.93.14q.252.042.492.094a8 8 0 0 1 .685.187q.435.145.809.342c.293-1.867-.002-3.138-1.012-4.289C30.207 12.542 28.2 12 25.63 12h-7.46c-.525 0-.973.382-1.054.901l-3.107 19.696a.64.64 0 0 0 .632.741h4.606l1.156-7.337z"
+                        fill="#fff" />
+                    </svg>
+      `;case"cashapp":return`
+                    <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="lime">
+                      <path
+                        d="M23.59 3.475a5.1 5.1 0 0 0-3.05-3.05c-1.31-.42-2.5-.42-4.92-.42H8.36c-2.4 0-3.61 0-4.9.4a5.1 5.1 0 0 0-3.05 3.06C0 4.765 0 5.965 0 8.365v7.27c0 2.41 0 3.6.4 4.9a5.1 5.1 0 0 0 3.05 3.05c1.3.41 2.5.41 4.9.41h7.28c2.41 0 3.61 0 4.9-.4a5.1 5.1 0 0 0 3.06-3.06c.41-1.3.41-2.5.41-4.9v-7.25c0-2.41 0-3.61-.41-4.91m-6.17 4.63-.93.93a.5.5 0 0 1-.67.01 5 5 0 0 0-3.22-1.18c-.97 0-1.94.32-1.94 1.21 0 .9 1.04 1.2 2.24 1.65 2.1.7 3.84 1.58 3.84 3.64 0 2.24-1.74 3.78-4.58 3.95l-.26 1.2a.49.49 0 0 1-.48.39H9.63l-.09-.01a.5.5 0 0 1-.38-.59l.28-1.27a6.54 6.54 0 0 1-2.88-1.57v-.01a.48.48 0 0 1 0-.68l1-.97a.49.49 0 0 1 .67 0c.91.86 2.13 1.34 3.39 1.32 1.3 0 2.17-.55 2.17-1.42s-.88-1.1-2.54-1.72c-1.76-.63-3.43-1.52-3.43-3.6 0-2.42 2.01-3.6 4.39-3.71l.25-1.23a.48.48 0 0 1 .48-.38h1.78l.1.01c.26.06.43.31.37.57l-.27 1.37c.9.3 1.75.77 2.48 1.39l.02.02c.19.2.19.5 0 .68" />
+                    </svg>
+      `;case"square":return`                    <Image alt="square logo" src="/images/square.svg" width="25" height="18"></Image>
+`;case"sumup":return`                    <Image alt="sumup logo" src="/images/sumup.avif" class="rounded-[--radius]" width="25" height="18">
+`;case"cryptomus":return`<Image alt="cryptomus logo" src="/images/Cryptomus.webp" class="rounded-full" width="25"
+                      height="18">
+                    </Image>`;case"cryptoCurrency":return`
+        <svg width="20" height="20" viewBox="0 0 125 125" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M54.973 14.852C58.323 16.75 61.25 18.499 63 22h2l2.188-2.25c6.907-6.754 13.587-8.054 23.027-8.065 8.762.18 14.653 3.444 20.992 9.315 6.663 7.433 8.175 14.896 8.066 24.613-.695 8.619-4.706 15.8-11.273 21.387-4.43 2.744-8.895 4.885-14 6l.5 2.75c1.416 10.46 1.197 19.676-5.113 28.508-5.674 6.819-11.893 11.217-20.903 12.078-9.47.099-16.175-1.078-24.234-6.023-7.066-7.263-10.541-14.687-10.5-24.876l-.016-3.878c.249-3.328.825-5.58 2.266-8.559l-3.937-.625c-8.128-1.84-14.199-6.472-18.844-13.324-4.799-8.074-5.74-16.61-3.563-25.828C12.644 24.863 18.22 18.303 26 14c9.282-3.665 19.94-3.387 28.973.852" fill="#E53A51"/>
+                        <path d="M103.012 14.68c7.404 4.917 12.815 10.591 15.597 19.207 1.842 9.961.509 18.91-5.082 27.332C108.611 67.449 101.821 71.487 94 73c-9.79.954-17.648-.978-25.312-7.25-7.134-6.745-10.638-14.277-11.063-24.125C57.734 35.96 59.322 31.918 62 27l.84-1.902c3-6.32 8.658-9.683 14.992-12.243 8.094-2.185 17.685-2.212 25.18 1.825" fill="#FEA91C"/>
+                        <path d="M54.977 14.863c3.643 2.047 6.195 3.945 8.586 7.387.593 3.73-.69 5.674-2.52 8.883C56.846 38.647 58.93 48.106 61 56l-1.906.445C48.828 59.135 42.844 64.235 37 73c-9.403-1.139-16.384-4.38-22.375-11.875C9.167 53.075 7.971 45.721 9 36c2.06-8.722 7.077-14.958 14.063-20.375 9.764-5.401 21.847-5.528 31.914-.762" fill="#488CF6"/>
+                        <path d="M109 20c5.268 3.512 7.718 7.943 9.59 13.867 1.912 9.94.515 18.948-5.063 27.352C108.611 67.449 101.821 71.487 94 73c-9.293.906-17.31-.737-24.625-6.75L67 64c3 0 3 0 5.73.977 7.236 2.264 16.203 2.317 23.27-.602 2.084-1.092 2.084-1.092 4-2.375l1.922-1.25c5.11-3.843 8.304-8.616 10.078-14.75.96-9.008.428-17.511-3-26" fill="#F07C17"/>
+                        <path d="M89 73h4c3.222 8.86 3.262 18.043-.668 26.68C87.641 107.852 81.118 113.429 72 116c-10.671 1.02-19.146-.057-28.062-6.062C42 108 42 108 41 105c2.797 1.102 5.453 2.236 8.125 3.625 6.694 2.825 13.797 1.99 20.563-.187 7.834-3.19 13.167-7.898 16.62-15.641 1.611-4.186 2.002-8.05 2.254-12.484l.131-2.127Q88.851 75.593 89 73" fill="#D3052B"/>
+                        <path d="m83 25 3 1v4h2v-5h3v5l2.375.313C96 31 96 31 98 34c-.094 1.973-.094 1.973-.5 4.063L97 42l2 2c.479 3.672.474 5.356-1.75 8.375C95 54 95 54 91 54v4h-3v-4h-2v4h-4v-4h-4v-3h4V33h-4l1-4h3z" fill="#FFF9F0"/>
+                        <path d="M64 68c3.294 3.142 6.006 6.172 8.375 10.063l1.586 2.535C75 83 75 83 74.895 85.128 73.144 88.792 69.657 90.526 66 92c-4.742-.664-8.145-3.246-12-6 1.353-4.741 3.334-8.323 6.125-12.375l2.195-3.21z" fill="#FEF9FA"/>
+                        <path d="m37 27 3 1-1 10 2.313-1.562c.886-.475 1.773-.95 2.687-1.438l3 1c-1.503 4.208-4.233 5.803-8 8h-2l-1 9h15l-1 4H32c-1-5-1-5-1-8h-3c.25-1.812.25-1.812 1-4l1.941-1.191c2.974-2.613 3.064-5.093 3.747-8.934C35.934 28.066 35.934 28.066 37 27" fill="#EDF3FE"/>
+                        <path d="M109 20c4.776 3.623 5.927 8.346 7 14 1.223 9.672-.468 16.939-6 25-5.38 6.369-12.404 10.286-20.695 11.344-6.545.223-13.3-.626-19.305-3.344-1.812-2.11-1.812-2.11-3-4l3.563 1.5c7.97 2.631 17.579 3.091 25.437-.125 2.084-1.092 2.084-1.092 4-2.375l1.922-1.25c5.11-3.843 8.304-8.616 10.078-14.75.96-9.008.428-17.511-3-26" fill="#F79118"/>
+                        <path d="M51 16v2l-3.367-.395c-10.97-1.093-17.67-.4-26.508 6.708C14.937 32.139 13.836 38.995 15 49c1.273 4.314 2.807 7.807 6 11l-1 3c-5.831-6.462-8.57-12.102-8.437-20.937l.02-2.13c.226-7.3 2.121-11.343 6.855-16.683L21 21l2.25-2.125C31.442 13.289 41.885 11.885 51 16" fill="#5A99F6"/>
+                        <path d="m54 88 1.793 1.129 2.395 1.433 2.355 1.442c3.016 1.223 4.39.98 7.457-.004 2.015-.93 2.015-.93 3.813-2.062 1.051-.64 2.103-1.28 3.187-1.938-1.544 3.288-3.396 6.247-5.437 9.25l-1.81 2.703L66 102h-3a72 72 0 0 1-4.687-5.875l-1.26-1.684C54 90.281 54 90.281 54 88" fill="#FCEEF0"/>
+                        <path d="M16 62c5.632 1.834 5.632 1.834 8.281 3.031 3.23 1.151 6.114 1.387 9.532 1.594l3.519.227L40 67l-3 6c-7.531-.912-13.168-3.06-19-8z" fill="#3B7EE4"/>
+                        <path d="M86 44h8c.625 2.375.625 2.375 1 5-2 2-2 2-5.625 2.125L86 51z" fill="#FFAE28"/>
+                        <path d="M86 33c5.75-.125 5.75-.125 8 1v5c-2.709 1.354-5.01 1.065-8 1z" fill="#FFAF2B"/>
+                        <path d="M74 87c-1.026 2.704-1.973 3.978-4.25 5.813-3.499 1.51-5.13 1.318-8.75.187-2.875-2.062-2.875-2.062-5-4 4 0 4 0 6.875 1.25 3.27 1.164 3.27 1.164 6.375-1.125C72 87 72 87 74 87" fill="#E84E63"/>
+                      </svg>
+      `;default:return'<svg width="20" height="20"><circle cx="10" cy="10" r="10" fill="gray"/></svg>'}}function getPaymentMethodDivs(){return document.querySelectorAll("[data-name]")}function buildDiscountTooltipDiv(upcharge,currency){let discountDiv=document.createElement("div");discountDiv.className="px-3 py-1 gap-1 text-xs text-green-500 bg-green-500/15 rounded-md flex items-center";let priceSpan=document.createElement("price-component");return priceSpan.setAttribute("data-currency",currency),priceSpan.setAttribute("id","upcharge-element"),priceSpan.setAttribute("data-price",upcharge.toString()),discountDiv.appendChild(priceSpan),discountDiv.innerHTML+=`
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                          class="lucide lucide-chevrons-down">
+                          <path d="m7 6 5 5 5-5" />
+                          <path d="m7 13 5 5 5-5" />
+                        </svg>
+  `,discountDiv}function buildFeeDiv(upcharge,currency){let feeDiv=document.createElement("div");feeDiv.className="px-3 py-1 gap-1 text-xs text-red-500 bg-red-500/15 rounded-md flex items-center";let priceSpan=document.createElement("price-component");return priceSpan.setAttribute("data-currency",currency),priceSpan.setAttribute("id","upcharge-element"),priceSpan.setAttribute("data-price",upcharge.toString()),feeDiv.appendChild(priceSpan),feeDiv.innerHTML+=`
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                          class="lucide lucide-chevrons-up">
+                          <path d="m17 11-5-5-5 5" />
+                          <path d="m17 18-5-5-5 5" />
+                        </svg>
+  `,feeDiv}function buildPaymentOptionsAccordion(paymentOptions){let accordionDiv=document.createElement("div");accordionDiv.className="flex flex-col divide-y";let accordionItem=document.createElement("div");accordionItem.className="flex flex-col border-none first:rounded-t-md last:rounded-b-md overflow-hidden";let trigger=document.createElement("div");trigger.className="px-4 py-3 flex text-xs flex-row w-full items-center justify-between bg-accent/40 tracking-wider hover:bg-accent/70 cursor-pointer",trigger.textContent="View Accepted Payment Methods";let icon=document.createElement("svg");icon.setAttribute("width","16"),icon.setAttribute("height","16"),icon.innerHTML='<path d="m6 9 6 6 6-6"/>',trigger.appendChild(icon);let content=document.createElement("div");return content.className="p-2 grid grid-cols-4 gap-2 bg-accent/20 hidden",paymentOptions.forEach(opt=>{let optionDiv=document.createElement("div");optionDiv.className="px-3 flex items-center gap-2 p-2.5 text-xs bg-black/30 rounded-md",optionDiv.innerHTML=`
+      <image width="20" height="20" src="${opt.icon}" alt="${opt.name}" class="rounded object-cover"/>
+      ${opt.name}
+    `,content.appendChild(optionDiv)}),trigger.addEventListener("click",()=>{content.classList.toggle("hidden")}),accordionItem.appendChild(trigger),accordionItem.appendChild(content),accordionDiv.appendChild(accordionItem),accordionDiv}function createCryptoPaymentOptions({availableCryptoCurrencies}){let cryptoButtonsContainer=document.createElement("div");if(cryptoButtonsContainer.className="crypto-buttons-container grid grid-cols-2 sm:grid-cols-4 gap-2",cryptoButtonsContainer.id="crypto-buttons-container",availableCryptoCurrencies.length<=0){let noOptions=document.createElement("div");return noOptions.className="text-sm text-muted-foreground p-2",noOptions.textContent="No cryptocurrency options available",cryptoButtonsContainer.appendChild(noOptions),cryptoButtonsContainer}if(availableCryptoCurrencies.forEach(crypto=>{let button=document.createElement("button");button.type="button",button.className="crypto-button flex items-center justify-start gap-2 rounded-md border p-2 transition-colors",button.dataset.crypto=crypto,button.innerHTML=`
+        <img src="/payment-icons/${crypto.toLowerCase()}Icon.svg" alt="${crypto}" class="h-5 w-5" onerror="this.src='/assets/images/crypto/generic.svg'"/>
+        <span class="text-sm font-medium">${crypto.toUpperCase()}</span>
+      `,button.addEventListener("click",()=>{let cryptoCurrencyInput=document.getElementById("cryptoCurrency");if(cryptoCurrencyInput){cryptoCurrencyInput.value=crypto,document.querySelectorAll(".crypto-button").forEach(btn=>{btn.classList.remove("active","border-primary","bg-primary/10","text-primary"),btn.classList.add("border-border","hover:border-primary/50","hover:bg-primary/5")}),button.classList.add("active","border-primary","bg-primary/10","text-primary"),button.classList.remove("border-border","hover:border-primary/50","hover:bg-primary/5");let selectedIndicator=document.getElementById("selected-crypto-indicator");if(selectedIndicator)selectedIndicator.textContent=`Selected: ${crypto.toUpperCase()}`,selectedIndicator.classList.remove("hidden");else{let indicator=document.createElement("div");indicator.id="selected-crypto-indicator",indicator.className="mt-2 text-sm text-muted-foreground",indicator.textContent=`Selected: ${crypto.toUpperCase()}`,cryptoButtonsContainer.insertAdjacentElement("afterend",indicator)}}}),cryptoButtonsContainer.appendChild(button)}),!document.getElementById("cryptoCurrency")){let hiddenInput=document.createElement("input");hiddenInput.type="hidden",hiddenInput.id="cryptoCurrency",hiddenInput.name="cryptoCurrency",cryptoButtonsContainer.appendChild(hiddenInput)}return cryptoButtonsContainer}function buildPaymentMethodDiv(method,currency,customer,availableCryptoCurrencies){let outerDiv=document.createElement("div");outerDiv.setAttribute("data-name",method.name),outerDiv.className="duration-300 border border-transparent cursor-pointer w-full px-4 hover:bg-accent/60 flex flex-1 items-center justify-between py-4 text-sm font-medium transition-all rounded-lg bg-accent/30";let flexWrapper=document.createElement("div");flexWrapper.className="flex flex-col gap-4 w-full",outerDiv.appendChild(flexWrapper);let topRow=document.createElement("div");topRow.className="flex flex-row items-center justify-between",flexWrapper.appendChild(topRow);let leftSide=document.createElement("div");leftSide.className="flex flex-row items-center gap-4",leftSide.innerHTML=` 
+    <span>${getMethodIcon(method.name)}</span>
+    <span>${getMethodDisplayName(method.name)}</span>
+  `,topRow.appendChild(leftSide);let rightSide=document.createElement("div");rightSide.className="flex flex-row items-center gap-2",topRow.appendChild(rightSide);let upchargeValue=method.totalWithoutUpcharge-method.totalWithoutUpcharge/method.upchargeMultiplier;if(method.upchargeMultiplier<1){let discountDiv=buildDiscountTooltipDiv(upchargeValue,currency);rightSide.appendChild(discountDiv)}else if(method.upchargeMultiplier>1){let feeDiv=buildFeeDiv(upchargeValue,currency);rightSide.appendChild(feeDiv)}if(method.name==="customerBalance"){let balanceDiv=document.createElement("div");balanceDiv.className="px-3 py-1 gap-1 text-xs bg-green-500/20 text-green-500 rounded-md flex items-center",balanceDiv.innerHTML=`
+      Balance
+      <price-component data-currency="usd" data-price="${customer.balance}"></price-component>
+    `,rightSide.appendChild(balanceDiv)}else{let totalDiv=document.createElement("div");totalDiv.className="px-3 py-1 gap-1 text-xs bg-blue-500/20 text-blue-500 rounded-md flex items-center",totalDiv.innerHTML=`
+      Total
+      <price-component data-currency="${currency}" data-price="${method.totalWithoutUpcharge+upchargeValue}"></price-component>
+    `,totalDiv.setAttribute("data-total",(method.totalWithoutUpcharge+upchargeValue).toFixed(2)),rightSide.appendChild(totalDiv)}let selectDiv=document.createElement("div");if(selectDiv.className="px-3 py-1 text-xs bg-white/15 rounded-md",selectDiv.setAttribute("select-name",`select-btn-${method.name}`),selectDiv.textContent="Select",rightSide.appendChild(selectDiv),method.name==="cryptoCurrency"){let cryptoButtonsContainer=createCryptoPaymentOptions({availableCryptoCurrencies});flexWrapper.appendChild(cryptoButtonsContainer)}if(method.paymentOptions&&method.paymentOptions.length>0){let accordion=buildPaymentOptionsAccordion(method.paymentOptions);flexWrapper.appendChild(accordion)}return outerDiv}var init_paymentMethodUi=__esm({"packages/cli/src/clientCode/cart/_components/paymentMethodUi.ts"(){"use strict"}});function selectPaymentMethod({params}){setPaymentMethodValue(params.paymentMethodInput,params.dataName),resetAllPaymentMethodStyles(params.paymentMethods,params.selectBtns),highlightClickedMethod(params.element,params.dataName)}function setPaymentMethodValue(paymentMethodInput,dataName){paymentMethodInput&&(paymentMethodInput.value=dataName)}function resetAllPaymentMethodStyles(paymentMethods,selectBtns){paymentMethods.forEach(btn=>{btn.classList.remove("border-[--accent-color]"),btn.removeAttribute("id")}),selectBtns.forEach(btn=>{btn.classList.remove("bg-[--light-accent-color]","text-[--accent-color]"),btn.classList.add("bg-white/15"),btn.textContent="Select"})}function highlightClickedMethod(element,dataName){element.classList.remove("border-transparent"),element.classList.add("border-[--accent-color]");let selectBtn=document.querySelector(`[select-name='select-btn-${dataName}']`);document.querySelector(`[data-name='${dataName}']`)?.setAttribute("id","selected-payment-method");let cryptoCurrencySelector=document.getElementById("crypto-currency-selector");selectBtn&&(selectBtn.classList.remove("bg-white/15"),selectBtn.classList.add("bg-[--light-accent-color]","text-[--accent-color]"),selectBtn.textContent="Selected"),dataName==="cryptoCurrency"&&cryptoCurrencySelector?.classList.remove("hidden")}function handleUpchargeLogic(upchargeFeeElement,upchargeValue){if(upchargeValue===0||!upchargeFeeElement){hideUpchargeFee(upchargeFeeElement);return}upchargeFeeElement.setAttribute("data-price",upchargeValue.toFixed(2));let feeTextElement=upchargeFeeElement.parentElement?.previousElementSibling??null;updateFeeText(feeTextElement,upchargeValue),showOrHideFeeContainer(upchargeFeeElement,upchargeValue)}function hideUpchargeFee(upchargeFeeElement){if(!upchargeFeeElement)return;upchargeFeeElement.setAttribute("data-price","0");let feeContainer=upchargeFeeElement.parentElement?.parentElement?.style;feeContainer&&(feeContainer.display="none")}function updateFeeText(element,upchargeValue){element&&(upchargeValue<0?(element.textContent="Payment Method Discount",element.classList.remove("text-muted-foreground/70"),element.classList.add("text-green-500")):(element.textContent="Payment Method Fee",element.classList.remove("text-green-500"),element.classList.add("text-muted-foreground/70")))}function showOrHideFeeContainer(upchargeFeeElement,upchargeValue){let feeContainer=upchargeFeeElement.parentElement?.parentElement?.style;feeContainer&&(feeContainer.display=upchargeValue!==0?"flex":"none")}var init_paymentMethodSelection=__esm({"packages/cli/src/clientCode/cart/_components/paymentMethodSelection.ts"(){"use strict"}});function updatePaymentMethodsTotalAndUpcharge({newTotalWithoutUpcharge,enabledPaymentMethods=[],priceBreakdownUpchargeFeeElement,priceBreakdownTotalElement}){setDOMPriceValue(priceBreakdownTotalElement,newTotalWithoutUpcharge),setDOMPriceValue(priceBreakdownUpchargeFeeElement,0);let paymentMethods=getPaymentMethodDivs();console.log("Updating payment methods",paymentMethods);let selectDivs=document.querySelectorAll("[select-name]"),selectedMethodName=(Array.from(selectDivs).find(div=>div.textContent?.trim()==="Selected")?.getAttribute("select-name")??null)?.replace("select-btn-","");console.log("selectedMethodName",selectedMethodName),paymentMethods.forEach(element=>{let dataName=element.getAttribute("data-name");if(!dataName){console.error("Payment method missing data-name attribute",element);return}let totalPriceElement=element.querySelector("[data-total]");if(!totalPriceElement){console.error("Payment method missing data-total element",element);return}let paymentMethod=enabledPaymentMethods.find(pm=>pm.name===dataName);if(!paymentMethod){console.error("Payment method not found",dataName);return}console.log("paymentMethod",paymentMethod);let upchargeValue=newTotalWithoutUpcharge*paymentMethod.upchargeMultiplier-newTotalWithoutUpcharge;console.log("dataName",dataName),selectedMethodName===dataName&&(console.log("Setting upcharge for selected method",dataName),console.log(totalPriceElement,priceBreakdownTotalElement,priceBreakdownUpchargeFeeElement),setDOMPriceValue(totalPriceElement,newTotalWithoutUpcharge+upchargeValue),handleUpchargeLogic(priceBreakdownUpchargeFeeElement,upchargeValue),setDOMPriceValue(priceBreakdownTotalElement,newTotalWithoutUpcharge+upchargeValue));let totalPriceSpan=totalPriceElement.querySelector("[data-price]");if(!totalPriceSpan){console.error("Payment method missing totalPriceSpan element",element);return}let totalWithUpchargeString=totalPriceSpan.textContent?.replace(/\d+\.\d+/,(newTotalWithoutUpcharge+upchargeValue).toFixed(2));if(!totalWithUpchargeString){console.error("Payment method missing totalPriceSpan textContent",element);return}totalPriceSpan.textContent=totalWithUpchargeString;let upchargeElement=element.querySelector("#upcharge-element");if(!upchargeElement){console.warn("Payment method missing upcharge element",element);return}let upchargeSpan=upchargeElement.querySelector("[data-price]");if(!upchargeSpan){console.error("Payment method missing upchargeSpan element",element);return}let upchargeWithCurrency=upchargeSpan.textContent?.replace(/\d+\.\d+/,Math.abs(upchargeValue).toFixed(2));if(!upchargeWithCurrency){console.error("Payment method missing upchargeWithCurrency textContent",element);return}upchargeSpan.textContent=upchargeWithCurrency})}function recalcTotals({cartItems,bundlePrices,couponDiscount,upchargeFeeElement,subtotalPriceElement,totalPriceElement,enabledPaymentMethods}){let rawSubtotal=computeSubtotal(cartItems,bundlePrices);setDOMPriceValue(subtotalPriceElement,rawSubtotal);let rawAddonTotal=calculateAddonTotalPrice(cartItems),totalBulkDiscount=cartItems.reduce((acc,ci)=>{if(ci.allowBulkDiscountsWithCoupons){let variantBulkDiscount=ci.bulkDiscountAmount;return acc+parseFloat(variantBulkDiscount)*ci.quantity}return acc},0),bulkDiscountContainer=document.getElementById("bulk_discount_container");totalBulkDiscount===0?bulkDiscountContainer?.classList.add("hidden"):bulkDiscountContainer?.classList.remove("hidden");let bulkDiscountEl=document.getElementById("bulk_discount")?.querySelector("[data-price]");bulkDiscountEl&&bulkDiscountEl.setAttribute("data-price",`-${totalBulkDiscount.toFixed(2)}`);let couponDiscountContainer=document.getElementById("coupon_discount_container");couponDiscount===0?couponDiscountContainer?.classList.add("hidden"):couponDiscountContainer?.classList.remove("hidden");let couponDiscountEl=document.getElementById("coupon_discount")?.querySelector("[data-price]");couponDiscountEl&&couponDiscountEl.setAttribute("data-price",`-${couponDiscount.toFixed(2)}`);let total=getTotalCartPrice({rawSubtotal,bulkDiscount:totalBulkDiscount,couponDiscount,rawAddonTotal,upchargeFeeElement:null,cartItemsQty:cartItems.reduce((acc,ci)=>acc+ci.quantity,0),bundleCount:bundlePrices.length});updatePaymentMethodsTotalAndUpcharge({newTotalWithoutUpcharge:total,enabledPaymentMethods,priceBreakdownUpchargeFeeElement:upchargeFeeElement,priceBreakdownTotalElement:totalPriceElement})}var init_cartRecalc=__esm({"packages/cli/src/clientCode/cart/_components/cartRecalc.ts"(){"use strict";init_cartUtils();init_paymentMethodUi();init_paymentMethodSelection()}});var entryHelpers_exports={};__export(entryHelpers_exports,{calculateCouponTotalDiscount:()=>calculateCouponTotalDiscount,getNewCartDataAndRecalcTotals:()=>getNewCartDataAndRecalcTotals,getPaymentPageInfo:()=>getPaymentPageInfo,handleRemoveCartItemOrBundle:()=>handleRemoveCartItemOrBundle,handleUpdateQuantity:()=>handleUpdateQuantity,setLocalCartAtomAndInput:()=>setLocalCartAtomAndInput});function setLocalCartAtomAndInput(newLocalCart){console.log("Setting local cart",newLocalCart),console.log("Previous local cart",localCart),setLocalCart(newLocalCart),setLayoutCartCount(newLocalCart.bundles.length+newLocalCart.items.length);let cartInput=document.getElementById("local-cart");cartInput&&(cartInput.value=JSON.stringify(newLocalCart))}async function handleRemoveCartItemOrBundle(itemId,type,enabledPaymentMethods){let localCartCopy={items:[...localCart.items],bundles:[...localCart.bundles]};type==="item"?localCartCopy.items=localCartCopy.items.filter(i=>i.variant.id!==itemId):localCartCopy.bundles=localCartCopy.bundles.filter(b=>b.id!==itemId);let deepClonedCart=JSON.parse(JSON.stringify(localCartCopy));setLocalCartAtomAndInput(deepClonedCart),document.getElementById(`${itemId}`)?.remove(),await getNewCartDataAndRecalcTotals(deepClonedCart,enabledPaymentMethods)}function handleUpdateQuantity(variantId,newQty){let localCartCopy={...localCart};return newQty<1||(localCartCopy.items=localCartCopy.items.map(i=>i.variant.id===variantId?{...i,quantity:newQty}:i),setLocalCartAtomAndInput(localCartCopy)),localCartCopy}async function getNewCartDataAndRecalcTotals(localCartStorage,enabledPaymentMethods){let cartData=await getCartData({localCartStorage}),couponDiscount=await calculateCouponTotalDiscount(cartData),{cartItems,upchargeFeeElement,totalPriceElement,subtotalPriceElement,bundlePrices}=getPaymentPageInfo(cartData);recalcTotals({cartItems,bundlePrices,bulkDiscount:0,couponDiscount,upchargeFeeElement,subtotalPriceElement,totalPriceElement,enabledPaymentMethods})}async function validateCoupon(couponCode,itemId,isVariant){return isCouponValid({params:{couponCode,...isVariant?{variantId:itemId}:{bundleId:itemId}}})}function calculateItemDiscount(item,couponValue,valueType){return valueType==="percentage"?parseFloat(item.variant.rawPrice)*item.quantity*couponValue/100:couponValue}function calculateBundleDiscount(bundle,couponValue,valueType){return valueType==="percentage"?parseFloat(bundle.total)*couponValue/100:couponValue}async function calculateCouponTotalDiscount(cart){return(await Promise.all([...cart.bundles,...cart.items].map(async itemOrBundle=>{if(!itemOrBundle.coupon)return 0;let isVariant="variant"in itemOrBundle,itemId=isVariant?itemOrBundle.variant.id:itemOrBundle.id,couponValid=await validateCoupon(itemOrBundle.coupon,itemId,isVariant);return couponValid.success?isVariant?calculateItemDiscount(itemOrBundle,couponValid.coupon.couponValue,couponValid.coupon.valueType):calculateBundleDiscount(itemOrBundle,couponValid.coupon.couponValue,couponValid.coupon.valueType):0}))).reduce((total,discount)=>total+discount,0)}function getPaymentPageInfo(cartData){let cartItems=cartData.items,bundlePrices=cartData.bundles.map(b=>parseFloat(b.total)),upchargeFeeElement=document.getElementById("upcharge_fee"),totalPriceElement=document.getElementById("total_price"),subtotalPriceElement=document.getElementById("subtotal_price");return{cartItems,bundlePrices,upchargeFeeElement,totalPriceElement,subtotalPriceElement}}var init_entryHelpers=__esm({"packages/cli/src/clientCode/cart/_components/entryHelpers.ts"(){"use strict";init_setLayoutCartCount();init_cartAPI();init_cartRecalc()}});init_cartAPI();init_cartAPI();init_entryHelpers();function isCouponLoading(isLoading){let applyCouponButton=document.getElementById("apply-coupon-button"),applyCouponButtonArrow=document.getElementById("apply-coupon-button-arrow");if(!(!applyCouponButton||!applyCouponButtonArrow))if(isLoading){applyCouponButtonArrow.classList.add("hidden");let loadingSvg=document.createElement("div");loadingSvg.className="animate-spin h-[14px] w-[14px] border border-white/20 border-t-white border-t-2 rounded-full",loadingSvg.id="apply-coupon-button-loading",applyCouponButton.appendChild(loadingSvg)}else{applyCouponButtonArrow.classList.remove("hidden");let loadingSvg=document.getElementById("apply-coupon-button-loading");loadingSvg&&loadingSvg.remove()}}function getCurrentLocalCart(fallbackCart){let cartInputElement=document.getElementById("local-cart");if(!cartInputElement)return fallbackCart;try{return JSON.parse(cartInputElement.value)}catch{return fallbackCart}}async function processBundles(bundles,couponCode){return Promise.all(bundles.map(async bundle=>{let couponResult=await isCouponValid({params:{couponCode,bundleId:bundle.id}});return couponResult.success?{...bundle,coupon:couponCode}:(toast.error(couponResult.error),bundle)}))}async function processItems(items,couponCode){return Promise.all(items.map(async item=>{let couponResult=await isCouponValid({params:{couponCode,variantId:item.variant.id}});return couponResult.success?{...item,coupon:couponCode}:(toast.error(couponResult.error),item)}))}async function handleApplyCouponClick(localCart2,setLocalCartAtomAndInput2,enabledPaymentMethods,event){event.preventDefault(),isCouponLoading(!0);let couponInput=document.getElementById("coupon-input");try{if(!couponInput){console.error("Could not find coupon input");return}let couponCode=couponInput.value;if(!couponCode){toast.error("No coupon code provided");return}let currentLocalCart=getCurrentLocalCart(localCart2);if(currentLocalCart.items.length===0&&currentLocalCart.bundles.length===0){toast.error("Your cart is empty");return}let[newBundles,newCartItems]=await Promise.all([processBundles(currentLocalCart.bundles,couponCode),processItems(currentLocalCart.items,couponCode)]),newLocalCart={items:newCartItems,bundles:newBundles};await getNewCartDataAndRecalcTotals(newLocalCart,enabledPaymentMethods),setLocalCartAtomAndInput2(newLocalCart)}finally{isCouponLoading(!1)}}function setupCouponCodeInput(localCart2,setLocalCartAtomAndInput2,enabledPaymentMethods){let applyCouponButton=document.getElementById("apply-coupon-button");if(!applyCouponButton){console.error("Could not find apply coupon button");return}let boundHandler=e=>handleApplyCouponClick(localCart2,setLocalCartAtomAndInput2,enabledPaymentMethods,e);applyCouponButton.addEventListener("click",boundHandler)}init_entryHelpers();function cartItemRemoveButton({identifierAttribute}){let removeBtn=document.createElement("button");return removeBtn.type="button",removeBtn.setAttribute(identifierAttribute.name,identifierAttribute.value),removeBtn.className="p-2 absolute -top-1 right-0 rounded-full hover:bg-red-500/20 duration-200 text-muted-foreground hover:text-red-500 cursor-pointer",removeBtn.innerHTML=`
+      <svg width="16" height="16" viewBox="0 0 32 32">
+        <path
+          fill="none"
+          stroke="currentColor"
+          stroke-width="3"
+          stroke-miterlimit="10"
+          d="M23 27H11c-1.1 0-2-.9-2-2V8h16v17c0 1.1-.9 2-2 2zm4-19H7m7 0V6c0-.6.4-1 1-1h4c.6 0 1 .4 1 1v2m-3 15V12m4 11V12m-8 11V12"
+        />
+      </svg>
+    `,removeBtn}function quantityControls(item){let qtyControls=document.createElement("div");return qtyControls.className="flex flex-col h-full justify-end items-end gap-2",qtyControls.innerHTML=`
+    <div class="flex flex-row items-center gap-2">
+      <span class="text-xs text-muted-foreground/70 hidden sm:inline-block">
+        Quantity:
+      </span>
+      <div class="flex flex-row gap-0.5 items-center">
+        <input
+          type="hidden"
+          id="quantity-item-${item.id}"
+          value="${item.quantity}"
+        />
+        <custom-button
+          type="button"
+          id="decrement-item-${item.id}"
+          class="h-6 hover:bg-[--accent-color] px-2 bg-accent rounded-md cursor-pointer"
+        >
+          -
+        </custom-button>
+        <input
+          id="quantity-display-${item.id}"
+          type="number"
+          min="1"
+          value="${item.quantity}"
+          class="w-12 text-center text-white text-xs bg-accent/30 rounded-md px-1 py-1 mx-2"
+        />
+        <custom-button
+          type="button"
+          id="increment-item-${item.id}"
+          class="h-6 hover:bg-[--accent-color] px-2 bg-accent rounded-md cursor-pointer"
+        >
+          +
+        </custom-button>
+      </div>
+    </div>
+  `,qtyControls}function renderCartItemAddons(item){let addonsOuter=document.createElement("div");addonsOuter.className="mb-2";let addonsFlex=document.createElement("div");addonsFlex.className="flex flex-col gap-2",addonsOuter.appendChild(addonsFlex);let addonsPriceTab=document.getElementById("addons-price-tab");if(item.addons?.length&&addonsPriceTab){let addonTitle=document.createElement("div");addonTitle.className="text-[10px] text-muted-foreground/70",addonTitle.textContent="Addons:",addonsPriceTab.appendChild(addonTitle)}return item.addons?.forEach(addon=>{let addonRow=document.createElement("div");addonRow.className="flex flex-row items-start justify-between gap-2 bg-[--light-accent-color] text-[--accent-color] px-2 py-1 rounded";let leftCol=document.createElement("div");leftCol.className="flex flex-col";let addonName=document.createElement("span");addonName.className="text-xs",addonName.textContent=addon.name,leftCol.appendChild(addonName);let addonPrice=document.createElement("div");if(addonPrice.className="text-xs",addonPrice.innerHTML=`
+      <price-component
+        data-currency="${addon.currency}"
+        data-price="${addon.price}"
+      ></price-component>
+    `,addonRow.appendChild(leftCol),addonRow.appendChild(addonPrice),addonsFlex.appendChild(addonRow),addonsPriceTab){let addonPriceTab=document.createElement("div");addonPriceTab.className="flex flex-row justify-between items-center",addonPriceTab.innerHTML=`
+        <span class="text-xs">${addon.name}</span>
+        <div class="text-xs flex flex-row gap-0.5 items-center">
+          <span>+</span>
+          <price-component
+            data-currency="${addon.currency}"
+            data-price="${addon.price}"
+          ></price-component>
+        </div>
+      `,addonsPriceTab.appendChild(addonPriceTab)}}),addonsOuter}var CartBundleOrItem=class extends lit.LitElement{static get properties(){return{price:{type:String},priceSlash:{type:String},currency:{type:String},subTitle:{type:String},itemTitle:{type:String},image:{type:String},type:{type:String},quantity:{type:Number}}}render(){let removeBtn=cartItemRemoveButton({identifierAttribute:{name:this.type==="item"?"variant-id":"bundle-id",value:this.id}});removeBtn.addEventListener("click",async()=>{await handleRemoveCartItemOrBundle(this.id,this.type,this.enabledPaymentMethods)});let last=this.type==="item"?quantityControls({id:this.id,quantity:this.quantity??1}):lit.html`<div
+            class="text-[10px] px-2 py-1 font-semibold rounded-md bg-[--light-accent-color] text-[--accent-color]"
+            >BUNDLE</div>`;return console.log(last),lit.html`<div class="flex flex-col gap-1" id="${this.id}">
+      <div
+        class="relative flex w-full flex-col gap-3 sm:flex-row sm:items-end"
+      >
+        ${removeBtn}
+        <image-component
+          alt="product image"
+          width="56"
+          height="56"
+          src="${this.image??"/images/no_image_placeholder.png"}"
+          class="h-14 w-14 min-w-14 min-h-14 rounded-md object-cover shrink-0"
+        ></image-component>
+        <div class="flex w-full flex-col justify-between gap-2">
+          <!-- right side div -->
+          <div class="flex flex-col">
+            <!-- title div -->
+            <div class="line-clamp-1 text-sm font-medium">
+              ${this.itemTitle}
+            </div>
+            <!-- item title -->
+            ${this.subTitle?lit.html`<div
+                    class="text-muted-foreground/70 line-clamp-1 text-[10px]"
+                  >
+                    ${this.subTitle}
+                  </div>`:""}
+          </div>
+          <div class="flex flex-row items-center justify-between gap-2">
+            <div class="flex items-center gap-2 text-sm font-medium text-[--accent-color]"> <!-- priceInner -->
+              ${this.priceSlash&&this.priceSlash!==this.price&&parseFloat(this.priceSlash)>0?lit.html`
+                  <div class="text-muted-foreground line-through">
+                    <price-component data-currency="${this.currency}" data-price="${this.priceSlash}"></price-component>
+                  </div>
+                  `:""}
+              <price-component data-currency="${this.currency}" data-price="${this.price}"></price-component>
+
+              <span class="text-[10px] text-muted-foreground/70">
+                x${this.quantity}
+              </span>
+            </div>
+          </div> <!-- end priceRow -->
+        </div>
+        ${last}
+      </div>
+    </div>`}createRenderRoot(){return this}};customElements.get("cart-bundle-or-item")||customElements.define("cart-bundle-or-item",CartBundleOrItem);function renderCartBundleOrItem(itemData){let newItem=document.createElement("cart-bundle-or-item");return newItem.type=itemData.type,newItem.id=itemData.id,newItem.price=itemData.price,newItem.priceSlash=itemData.priceSlash,newItem.currency=itemData.currency,newItem.itemTitle=itemData.title,newItem.subTitle=itemData.subTitle,newItem.image=itemData.image,newItem.type=itemData.type,newItem.enabledPaymentMethods=itemData.enabledPaymentMethods,newItem.quantity=itemData.quantity,newItem}init_cartRecalc();init_cartAPI();function setupItemQuantity({item,bulkDiscount,couponDiscount:_couponDiscount,upchargeFeeElement,subtotalPriceElement,totalPriceElement,onItemQuantityChange,enabledPaymentMethods}){let elements=getQuantityElements(item.variant.id);if(!elements)return;let{quantityElement,quantityInput}=elements,minQty=item.variant.minOrderQuantity||1,maxQty=item.variant.maxOrderQuantity||1/0,quantity=item.quantity;quantity<minQty&&(quantity=minQty),quantity>maxQty&&(quantity=maxQty),quantityElement.value=String(quantity),quantityInput.value=String(quantity),setupQuantityControls({item,quantity,minQty,maxQty,elements,onItemQuantityChange,bulkDiscount,upchargeFeeElement,subtotalPriceElement,totalPriceElement,enabledPaymentMethods})}function getQuantityElements(variantId){let quantityElement=document.getElementById(`quantity-display-${variantId}`),incrementElement=document.getElementById(`increment-item-${variantId}`),decrementElement=document.getElementById(`decrement-item-${variantId}`),quantityInput=document.getElementById(`quantity-item-${variantId}`);return!quantityElement||!quantityInput?null:{quantityElement,quantityInput,incrementElement,decrementElement}}function setupQuantityControls({item,quantity,minQty,maxQty,elements,onItemQuantityChange,bulkDiscount,upchargeFeeElement,subtotalPriceElement,totalPriceElement,enabledPaymentMethods}){let{quantityElement,quantityInput,incrementElement,decrementElement}=elements,currentQuantity=quantity;async function updateQuantity(change){let newQ=currentQuantity+change;if(newQ<minQty||newQ>maxQty)return;currentQuantity=newQ,quantityElement.value=String(newQ),quantityInput.value=String(newQ);let newLocalCart=onItemQuantityChange(item.variant.id,newQ);setCartLoading(!0),await getCartData({localCartStorage:newLocalCart}).then(async data=>{let updatedCouponDiscount=await Promise.resolve().then(()=>(init_entryHelpers(),entryHelpers_exports)).then(module=>module.calculateCouponTotalDiscount(data));recalcTotals({cartItems:data.items,bundlePrices:data.bundles.map(b=>parseFloat(b.total)),bulkDiscount,couponDiscount:updatedCouponDiscount,upchargeFeeElement,subtotalPriceElement,totalPriceElement,enabledPaymentMethods}),setCartLoading(!1)})}setupEventListeners(incrementElement,decrementElement,quantityElement,updateQuantity,()=>currentQuantity)}function setupEventListeners(incrementElement,decrementElement,quantityElement,updateQuantity,getCurrentQuantity){incrementElement?.getAttribute("data-setup")||(incrementElement?.addEventListener("click",()=>updateQuantity(1)),incrementElement?.setAttribute("data-setup","1")),decrementElement?.getAttribute("data-setup")||(decrementElement?.addEventListener("click",()=>updateQuantity(-1)),decrementElement?.setAttribute("data-setup","1")),quantityElement.getAttribute("data-input-setup")||(quantityElement.addEventListener("input",()=>{let inputValue=parseInt(quantityElement.value),currentQty=getCurrentQuantity();if(isNaN(inputValue)||inputValue<1)return;let change=inputValue-currentQty;change!==0&&updateQuantity(change)}),quantityElement.addEventListener("blur",()=>{let inputValue=parseInt(quantityElement.value),currentQty=getCurrentQuantity();(isNaN(inputValue)||inputValue<1)&&(quantityElement.value=String(currentQty))}),quantityElement.setAttribute("data-input-setup","1"))}function setCartLoading(isLoading){let subtotalPriceElement=document.getElementById("subtotal_price_tag"),bulkDiscountElement=document.getElementById("bulk_discount_tag"),couponDiscountElement=document.getElementById("coupon_discount_tag"),upchargeFeeElement=document.getElementById("upcharge_fee"),totalPriceElement=document.getElementById("total_price_tag");subtotalPriceElement?.setAttribute("data-loading",isLoading.toString()),bulkDiscountElement?.setAttribute("data-loading",isLoading.toString()),couponDiscountElement?.setAttribute("data-loading",isLoading.toString()),upchargeFeeElement?.setAttribute("data-loading",isLoading.toString()),totalPriceElement?.setAttribute("data-loading",isLoading.toString())}init_cartRecalc();init_cartUtils();init_entryHelpers();init_paymentMethodSelection();init_paymentMethodUi();function renderCartItems({cartData,container,enabledPaymentMethods}){cartData.items.forEach(item=>{let itemWrapper=renderCartBundleOrItem({id:item.variant.id,price:item.variant.price,priceSlash:item.variant.priceSlash,rawPrice:item.variant.rawPrice,currency:item.variant.currency,title:item.name,subTitle:item.variant.name,quantity:item.quantity,image:item.image,type:"item",enabledPaymentMethods});if(item.addons?.length){let addonsOuter=renderCartItemAddons({...item});itemWrapper.appendChild(addonsOuter)}container.appendChild(itemWrapper)})}function renderCartBundles({cartData,container,enabledPaymentMethods}){cartData.bundles.forEach(bundle=>{let itemWrapper=renderCartBundleOrItem({id:bundle.id,price:bundle.total,priceSlash:void 0,rawPrice:bundle.total,currency:bundle.currency,title:bundle.name,subTitle:void 0,quantity:1,image:bundle.image,type:"bundle",enabledPaymentMethods});container.appendChild(itemWrapper)})}async function renderCart({cartData,enabledPaymentMethods}){let container=document.getElementById("cart-products-list");if(!container)return;container.classList.add("bg-accent/30","p-4","gap-4","rounded-lg","flex","flex-col"),container.innerHTML="",document.getElementById("cart-skeleton")?.remove(),renderCartItems({cartData,container,enabledPaymentMethods}),renderCartBundles({cartData,container,enabledPaymentMethods})}function setupReferralAndEmailInput(sessionReferralCode){let referralInput=document.getElementById("referral-input"),referralCode=document.getElementById("referral-code");referralInput&&referralCode&&(referralInput.value=sessionReferralCode,referralCode.value=sessionReferralCode,referralInput.addEventListener("input",event=>{let target=event.target;referralCode.value=target.value}));let emailInput=document.getElementById("email-input"),emailHidden=document.getElementById("email");emailInput&&emailHidden&&emailInput.addEventListener("input",event=>{let target=event.target;emailHidden.value=target.value})}async function setupAllItemQuantities(cartData,bulkDiscount,enabledPaymentMethods){let{cartItems,upchargeFeeElement,totalPriceElement,subtotalPriceElement}=getPaymentPageInfo(cartData),couponDiscount=await calculateCouponTotalDiscount(cartData);cartItems.forEach(item=>{setupItemQuantity({item,bulkDiscount,couponDiscount,upchargeFeeElement,subtotalPriceElement,totalPriceElement,onItemQuantityChange:(variantId,newQty)=>handleUpdateQuantity(variantId,newQty),enabledPaymentMethods})})}async function setupPaymentMethods(bulkDiscount,enabledPaymentMethods){let paymentMethods=getPaymentMethodDivs(),selectBtns=document.querySelectorAll("[select-name]"),paymentMethodInput=document.getElementById("paymentMethod");paymentMethods.length>0&&!document.querySelector("[select-name]")&&paymentMethods[0]?.click(),paymentMethods.forEach(element=>{let dataName=element.getAttribute("data-name");dataName&&element.addEventListener("click",async()=>{selectPaymentMethod({params:{element,dataName,paymentMethodInput,paymentMethods,selectBtns}});let cartData=await getCartData({localCartStorage:localCart}),{cartItems,bundlePrices,upchargeFeeElement,subtotalPriceElement,totalPriceElement}=getPaymentPageInfo(cartData),couponDiscount=await calculateCouponTotalDiscount(cartData);recalcTotals({cartItems,bundlePrices,bulkDiscount,couponDiscount,upchargeFeeElement,subtotalPriceElement,totalPriceElement,enabledPaymentMethods})})})}async function initCartPageLogic({cartData,enabledPaymentMethods,parsedData}){let{sessionReferralCode,bulkDiscount}=parsedData;setupCouponCodeInput(localCart,setLocalCartAtomAndInput,enabledPaymentMethods),await setupAllItemQuantities(cartData,bulkDiscount,enabledPaymentMethods),await setupPaymentMethods(bulkDiscount,enabledPaymentMethods),setupReferralAndEmailInput(sessionReferralCode),await getNewCartDataAndRecalcTotals(localCart,enabledPaymentMethods)}function hydratePaymentMethods({paymentMethodInfo,currencyToUseForTotal,customer,availableCryptoCurrencies}){let container=document.getElementById("payment_div");if(!container){console.error("No #payment_div found in the DOM.");return}paymentMethodInfo.forEach(method=>{let methodDiv=buildPaymentMethodDiv(method,currencyToUseForTotal,customer,availableCryptoCurrencies);container.appendChild(methodDiv)}),document.getElementById("payment_method_skeletons")?.remove()}async function entrypoint(stringData){console.log("cart page loaded "),setLocalCartAtomAndInput(localCart);let cartData=await getCartData({localCartStorage:localCart}),[{enabledPaymentMethods},couponDiscount]=await Promise.all([getEnabledPaymentMethods(localCart.items.map(i=>i.coupon??"").concat(localCart.bundles.map(b=>b.coupon??""))),calculateCouponTotalDiscount(cartData)]),totalCartPrice=getTotalCartPrice({rawSubtotal:computeSubtotal(cartData.items,cartData.bundles.map(b=>parseFloat(b.total))),bulkDiscount:0,couponDiscount,rawAddonTotal:calculateAddonTotalPrice(cartData.items),upchargeFeeElement:null,cartItemsQty:cartData.items.reduce((acc,ci)=>acc+ci.quantity,0),bundleCount:cartData.bundles.length}),paymentMethodInfo=enabledPaymentMethods.map(pm=>{let upchargeMultiplier=cartData.items.reduce((acc,item)=>{let pmo=item.variant.paymentMethodOverrides.find(ov=>ov.paymentMethod===pm.name);return pmo?parseFloat(pmo.priceMultiplier):acc},1)||1;return{name:pm.name,upchargeMultiplier,totalWithoutUpcharge:totalCartPrice}});await renderCart({cartData,enabledPaymentMethods:paymentMethodInfo});let parsedData=Zod.object({sessionReferralCode:Zod.string(),bulkDiscount:Zod.number(),customerBalance:Zod.coerce.number(),availableCryptoCurrencies:Zod.array(Zod.string())}).parse(JSON.parse(stringData));hydratePaymentMethods({paymentMethodInfo,currencyToUseForTotal:"usd",customer:{balance:parsedData.customerBalance},availableCryptoCurrencies:parsedData.availableCryptoCurrencies}),await initCartPageLogic({parsedData,cartData,enabledPaymentMethods:paymentMethodInfo})}entrypoint(/*!{% endraw %}*/decodeURIComponent(`{
+    "sessionReferralCode": "{{sessionReferralCode | url_encode}}",
+    "customerBalance": "{{ customer.balance | url_encode }}",
+    "bulkDiscount": 0,
+    "availableCryptoCurrencies": {{ availableCryptoCurrencies | json }}
+    }
+
+  `)/*!{% raw %}*/);
+})();{% endraw %}</script>
+</div>

@@ -1,0 +1,421 @@
+<div class="bg-cover bg-center mx-auto w-full max-w-[1400px] px-4 !scroll-smooth">
+  <slot data-id="1" class="min-h-[100px]">
+    <vertical-layout
+      data-id="2a4a9a67-7276-4e3b-a150-1a03ab0fceed"
+      data-slots="5"
+      style="gap: 24px; align-items: center; justify-content: start"
+      data-spacing="36"
+      data-align-items="center"
+      class="pt-4"
+      data-justify-items="start">
+      <!-- Checkout ------ Payment ------ INVOICE -->
+      <div class="flex flex-row items-center">
+        <div class="px-2 py-1 rounded-full text-[10px] bg-[--accent-color] border border-[--accent-color] text-white">
+          CART</div>
+        <div class="h-[1px] bg-[--accent-color] w-[10vw]"></div>
+        <div class="px-2 py-1 rounded-full text-[10px] bg-[--accent-color] border border-[--accent-color] text-white">
+          PAYMENT</div>
+        <div class="h-[1px] bg-[--accent-color] w-[10vw]"></div>
+        <div class="px-2 py-1 rounded-full text-[10px] bg-[--accent-color] border border-[--accent-color] text-white">
+          INVOICE</div>
+      </div>
+      <!-- <div class="mt-10 text-center flex flex-col items-center gap-5">  <p id="header-info-text" class="text-[--accent-color] text-2xl md:text-3xl font-bold">PLEASE CONFIRM YOUR PAYMENT</p></div> -->
+      <div class="mt-6 mb-6 flex flex-col md:flex-row gap-4 min-h-[calc(100svh-380px-70px-50px)] w-full">
+        <div class="w-full md:w-2/3 flex flex-col gap-4">
+          <div class="font-semibold text-lg">Invoice</div>
+          <!-- Invoice Section -->
+          <div class="bg-accent/30 p-4 rounded-lg">
+            <!-- Invoice Number and time -->
+            <div class="flex flex-row items-start justify-between gap-4">
+              <div class="flex flex-col gap-2 items-start">
+                <span class="text-xs text-muted-foreground/70">Invoice ID</span>
+                <span class="font-semibold text-sm sm:text-xl text-[--accent-color]">{{ invoiceDetails.id }}</span>
+              </div>
+              <div class="flex flex-col gap-2 items-end">
+                <span class="text-xs text-muted-foreground/70">Amount</span>
+                <span class="font-semibold text-sm sm:text-xl text-white min-w-max">
+                  {% if invoiceDetails.methodId == "paypalF&F" or invoiceDetails.methodId == "paypalIPN" %}
+                    <span>{{
+invoiceDetails.notePaymentMethodTotalInCurrency }}</span>
+                  {% else %}
+                    <price data-currency="usd" data-price="{{ invoiceDetails.totalInUsd }}"></price>
+
+                  {% endif %}
+                </span>
+              </div>
+            </div>
+            <!-- Invoice Seprator -->
+            <div class="w-full h-[1px] bg-accent my-4"></div>
+            <!-- Invoice Details -->
+            <div class="flex flex-col gap-2">
+              <div class="min-h-[28px] flex flex-row gap-4 justify-between items-center">
+                <span class="text-xs text-muted-foreground/70">Store</span>
+                <span class="text-sm">{{ name }}</span>
+              </div>
+              <div class="min-h-[28px] flex flex-row gap-4 justify-between items-center">
+                <span class="text-xs text-muted-foreground/70">Your Email</span>
+                <span class="font-normal text-sm text-muted-foreground">{{ invoiceDetails.customer.email }}</span>
+              </div>
+              <div class="min-h-[28px] flex flex-row gap-4 justify-between items-center">
+                <span class="text-xs text-muted-foreground/70">Payment Method</span>
+                <span class="font-normal text-xs text-[--accent-color] px-2 py-1 rounded-md bg-[--light-accent-color] capitalize">{{
+invoiceDetails.paymentMethod }}</span>
+              </div>
+              <div class="min-h-[28px] flex flex-row gap-4 justify-between items-center">
+                <span class="text-xs text-muted-foreground/70">Invoice Created At</span>
+                <span class="text-sm text-muted-foreground uppercase">{{ invoiceDetails.createdAt | date: "%Y-%m-%d
+                  %I:%M %P" }}</span>
+              </div>
+              {% if invoiceDetails.methodId != "paypalF&F" and invoiceDetails.methodId != "paypalIPN" and invoiceDetails.paymentMethod != "Cash App" %}
+                <div class="min-h-[28px] flex flex-row gap-4 justify-between items-center">
+                  <span class="text-xs text-muted-foreground/70">Invoice Status</span>
+                  <div class="flex gap-3">
+                    <span class="font-normal text-xs px-2 py-1 rounded-md {% if invoiceDetails.status == 'completed' %} text-green-500 bg-green-500/15 {% elsif invoiceDetails.status == 'pending' %} text-orange-500 bg-orange-500/15 {% elsif invoiceDetails.status == 'expired' %} text-white bg-white/15  {% else %} text-red-500 bg-red-500/15 {% endif %} capitalize">{{
+invoiceDetails.status }}</span>
+                    {% if invoiceDetails.methodId == "cryptoCurrency" %}
+                      <div id="button-paid" class="cursor-pointer py-1 px-2 text-xs font-semibold rounded-md text-green-500 bg-green-500/15 hover:bg-green-500/30 text-center">
+                        MARK AS PAID</div>
+                    {% endif %}
+                  </div>
+                </div>
+              {% endif %}
+            </div>
+            <!-- {% if invoiceDetails.status == "pending" %}<div class="flex gap-4">  <div class="mt-4 text-sm text-orange-500 bg-orange-500/10 p-4 rounded-lg">If you have sent the payment then your payment is currently being processed. Please wait a moment while we finalize your order. You will be automatically redirected to the order page once the process is complete.</div></div>{% endif %} -->
+            <!-- Invoice Payment Details Paypal -->
+            {% if invoiceDetails.paymentInstructions %}
+              <div class="flex flex-col gap-2 text-sm font-semibold mt-2">
+                <span class="text-lg">Payment instructions:
+                </span>
+                <div class="flex rounded-md font-medium bg-accent/30 p-2 whitespace-pre-wrap overflow-x-scroll [&>div]:w-full">
+                  <format-markdown content="{{ invoiceDetails.paymentInstructions | escape }}"></format-markdown>
+                </div>
+              </div>
+
+            {% endif %}
+
+            {% if invoiceDetails.methodId == "paypalF&F" or invoiceDetails.methodId == "paypalIPN" %}
+              <div id="payment-confirmation-section-paypal" class="mt-4 bg-background rounded-lg flex flex-col">
+                <div class="p-4 border-b flex flex-row items-center justify-between">
+                  <div class="font-semibold text-sm">Pay With Email</div>
+                  <div class="flex gap-3">
+                    <span class="flex items-center uppercase px-2 py-1 rounded-md {% if invoiceDetails.status == 'completed' %} text-green-500 bg-green-500/15 {% elsif invoiceDetails.status == 'pending' %} text-orange-500 bg-orange-500/15 {% elsif invoiceDetails.status == 'expired' %} text-white bg-white/15  {% else %} text-red-500 bg-red-500/15 {% endif %} text-xs">{{
+invoiceDetails.status }}</span>
+                    <div id="button-paid" class="cursor-pointer py-1 px-2 text-xs font-semibold rounded-md text-green-500 bg-green-500/15 hover:bg-green-500/30 text-center">
+                      MARK AS PAID</div>
+                  </div>
+                </div>
+                <div class="p-4 flex flex-col gap-3">
+                  <div class="text-sm text-muted-foreground/70">To complete your invoice payment pay the invoice amount at                      
+                  the given email address.</div>
+                  <span class="flex flex-col sm:flex-row sm:items-center gap-2 text-sm font-semibold">
+                    <span span>Amount To Send:
+                    </span>
+                    <span class="font-medium py-1 px-2 rounded-md bg-[--light-accent-color] text-[--accent-color]">{{
+invoiceDetails.notePaymentMethodTotalInCurrency }}</span>
+                  </span>
+                  <span class="flex flex-col sm:flex-row sm:items-center gap-2 text-sm font-semibold">
+                    <span>Email To Send Payment:
+                    </span>
+                    <span class="font-medium py-1 px-2 rounded-md bg-[--light-accent-color] text-[--accent-color]">{{
+invoiceDetails.emailOrCashTag }}</span>
+                  </span>
+                  <span class="flex flex-col sm:flex-row sm:items-center gap-2 text-sm font-semibold">
+                    {% if invoiceDetails.paymentTransactionId %}
+                      <span>Note To Write:
+                      </span>
+
+
+                      <span class="font-medium py-1 px-2 rounded-md bg-[--light-accent-color] text-[--accent-color]">{{
+invoiceDetails.paymentTransactionId }}</span>
+                    {% else %}
+                      <span class="text-red-500/80">DO NOT ADD A NOTE TO THIS PAYMENT!
+                      </span>
+
+                    {% endif %}
+
+                  </span>
+                  <div class="text-xs text-red-500/80">Note: Make sure to send exact amount to this exact email as
+                    {% if invoiceDetails.paypalMethods contains 'friendsAndFamily' and invoiceDetails.paypalMethods contains 'goodsAndServices' %}
+                      'Friends and Family' or 'Goods and Services'
+                      {% elsif invoiceDetails.paypalMethods contains 'friendsAndFamily' %}'Friends and Family'{% elsif invoiceDetails.paypalMethods contains 'goodsAndServices' %}'Goods and services'{% endif %}
+                    {% if invoiceDetails.paymentTransactionId %}
+                      with the exact note to avoid any money losses.{% endif %}
+                  </div>
+                </div>
+
+              </div>
+            {% elsif invoiceDetails.paymentMethod == "Cash App" %}
+              <div id="payment-confirmation-section-cashapp" class="mt-4 bg-background rounded-lg flex flex-col">
+                <div class="p-4 border-b flex flex-row items-center justify-between">
+                  <div class="font-semibold text-sm">Pay With CashApp</div>
+                  <div class="flex gap-3">
+                    <span class="uppercase px-2 py-1 rounded-md {% if invoiceDetails.status == 'completed' %} text-green-500 bg-green-500/15 {% elsif invoiceDetails.status == 'pending' %} text-orange-500 bg-orange-500/15 {% elsif invoiceDetails.status == 'expired' %} text-white bg-white/15  {% else %} text-red-500 bg-red-500/15 {% endif %} text-xs">{{
+invoiceDetails.status }}</span>
+                    <div id="button-paid" class="cursor-pointer py-1 px-2 text-xs font-semibold rounded-md text-green-500 bg-green-500/15 hover:bg-green-500/30 text-center">
+                      MARK AS PAID</div>
+                  </div>
+                </div>
+                <div class="p-4 flex flex-col gap-3">
+                  <div class="text-sm text-muted-foreground/70">To complete your invoice payment pay the invoice amount at                      
+                  the given email address.</div>
+                  <span class="flex flex-col sm:flex-row sm:items-center gap-2 text-sm font-semibold">
+                    <span span>Amount To Send:
+                    </span>
+                    <span class="font-medium py-1 px-2 rounded-md bg-[--light-accent-color] text-[--accent-color]">{{
+invoiceDetails.notePaymentMethodTotalInCurrency }}</span>
+                  </span>
+                  <span class="flex flex-col sm:flex-row sm:items-center gap-2 text-sm font-semibold">
+                    <span>CashTag To Send Payment:
+                    </span>
+                    <span class="font-medium py-1 px-2 rounded-md bg-[--light-accent-color] text-[--accent-color]">${{
+invoiceDetails.emailOrCashTag }}</span>
+                  </span>
+
+                  <span class="flex flex-col sm:flex-row sm:items-center gap-2 text-sm font-semibold">
+                    {% if invoiceDetails.paymentTransactionId %}
+                      <span>Note To Write:
+                      </span>
+
+
+                      <span class="font-medium py-1 px-2 rounded-md bg-[--light-accent-color] text-[--accent-color]">{{
+invoiceDetails.paymentTransactionId }}</span>
+                    {% else %}
+                      <span class="text-red-500/80">DO NOT ADD A NOTE TO THIS PAYMENT!
+                      </span>
+
+                    {% endif %}
+
+                  </span>
+                  <div class="text-xs text-red-500/80">Note: Make sure to send exact amount to this exact cashtag
+                    {% if invoiceDetails.paymentTransactionId %}
+                      with the exact note to avoid any money losses.{% endif %}
+                  </div>
+                </div>
+              </div>
+            {% elsif invoiceDetails.paymentMethod == "Crypto" %}
+              <crypto-address-details
+                data-crypto-addresses="{{ invoiceDetails.cryptoAddresses | jsonify | escape }}"
+                data-underpayment="{{ invoiceDetails.underpayment | jsonify | escape }}"
+                data-created-at="{{ invoiceDetails.createdAt }}"
+                data-total-in-currency="{{ invoiceDetails.totalInCurrency }}"></crypto-address-details>
+            {% endif %}
+
+            <!-- timer block -->
+            <div id="timer-block" class="mt-8 flex flex-col items-center hidden">
+              <div class="text-sm text-orange-500 bg-orange-500/10 p-4 rounded-lg">Your payment is currently being                      
+                processed. Please wait a moment while we finalize your order. You will be automatically redirected to
+                the order page once the process is complete.</div>
+              <p class="mt-4 text-center text-lg font medium">Please wait while we process your order</p>
+              <img
+                src="/images/loading.svg"
+                class="w-[120px] h-[120px]"
+                width="24"
+                height="24">
+              <div id="countdown-timer" class="text-xl md:text-2xl text-[--accent-color] rounded-full flex items-center justify-center">05:00
+              </div>
+              <p class="mt-4 text-gray-300/40 text-center text-base max-w-[400px]">You will be redirected to your order                      
+                page after we confirm your payment</p>
+            </div>
+          </div>
+        </div>
+        <!-- Payment Section -->
+
+        <div class="w-full md:w-1/3 flex flex-col gap-4 h-fit md:sticky md:top-20">
+          <div id="share-section-label" class="hidden font-semibold text-lg">Share</div>
+          <!-- Share Section -->
+          <div id="share-section" class="hidden bg-accent/30 p-4 rounded-lg flex flex-col gap-3">
+            <p>Let others know about your purchases!</p>
+            <div class="flex gap-4 w-full">
+              <a
+                class="text-white py-1 px-3 text-xs rounded-lg w-full bg-[#1877F2] hover:bg-[#1877F2dd] text-center flex items-center gap-3 justify-center"
+                id="share-facebook"
+                href=""
+                target="_blank">
+                <img
+                  src="/images/facebook.svg"
+                  class="w-[24px] h-[24px] fill-current text-white"
+                  width="24"
+                  height="24">
+                <p>Facebook</p>
+              </a>
+              <a
+                class="py-1 px-3 text-xs rounded-lg w-full bg-[#fff] hover:bg-[#ddd] text-center text-black flex items-center gap-3 justify-center"
+                id="share-twitter"
+                href=""
+                target="_blank">
+                <img
+                  src="/images/twitter.svg"
+                  class="w-[24px] h-[24px]"
+                  width="24"
+                  height="24">
+                <p>Twitter / X</p>
+              </a>
+            </div>
+          </div>
+          <div class="font-semibold text-lg">Ordered Items</div>
+          <div class="w-full flex flex-col gap-4">
+            <div class="gap-4 flex flex-col">
+              <!-- Cart Products List -->
+              {% for item in invoiceDetails.invoiceItems %}
+                <div class="flex flex-col w-full bg-accent/30 p-4 rounded-lg">
+                  <div class="w-full flex flex-col sm:flex-row sm:items-center gap-3">
+                    <fade-in-image
+                      alt="product image"
+                      src="{{ item.productVariant.product.images[0] | default: '/images/no_image_placeholder.png'}}"
+                      class="h-14 w-14 min-w-14 min-h-14 rounded-md object-cover shrink-0"></fade-in-image>
+                    <div class="w-full flex flex-col sm:flex-row justify-between gap-2">
+                      <!-- Product Info -->
+                      <div class="flex flex-col justify-between gap-1 w-full">
+                        <div class="flex flex-col">
+                          <div class="text-sm font-medium line-clamp-1">{{ item.productVariant.product.name }}</div>
+                          <div class="flex flex-row items-center justify-between gap-2">
+                            <div class="text-xs text-muted-foreground/70 line-clamp-1">{{ item.productVariant.name }}</div>
+                            <span class="text-[10px] text-muted-foreground/70">x{{ item.quantity }}</span>
+                          </div>
+                        </div>
+                        <div class="flex flex-row items-center justify-between gap-2">
+                          <div class="text-sm font-medium text-[--accent-color]">
+                            <price data-currency="{{item.currency}}" data-price="{{ item.price }}"></price>
+                          </div>
+                          <div class="text-[10px] px-2 py-1 font-semibold rounded-md bg-[--light-accent-color] text-[--accent-color]">
+                            VARIANT</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Add ons -->
+                  {% if item.addons.length != 0 %}
+                    <div class="mt-2">
+                      <div class="flex flex-col gap-2">
+                        {% for addon in item.addons %}
+                          <div class="flex flex-row items-start justify-between gap-2 bg-[--light-accent-color] text-[--accent-color] p-1 px-2 rounded-sm">
+                            <div class="flex flex-col">
+                              <span class="text-[10px]">{{ addon.addonDetails.name }}</span>
+                              <span class="text-[10px] opacity-50">{{ addon.addonDetails.description }}</span>
+                            </div>
+                            <div class="text-xs">
+                              <price data-currency="{{addon.addonDetails.currency}}" data-price="{{ addon.addonDetails.price }}"></price>
+                            </div>
+                          </div>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+          <p class="text-xs text-muted-foreground/70 text-center px-4">Your items will be sent on your entered email                      
+            address, Thanks for purchasing from us.</p>
+
+        </div>
+      </div>
+    </vertical-layout>
+  </slot>
+
+  <script key="invoice-script">
+    // share feature
+    if (typeof (invoiceDetails) === 'undefined') {
+      try {
+
+        let invoiceDetails = JSON.parse('{{ invoiceDetails | json }}');
+        let prod = invoiceDetails.invoiceItems[0].productVariant.product.name;
+
+        let prodUrl = window.location.origin + "/product/" + prod;
+
+
+        const facebookShareLink = document.querySelector('#share-facebook');
+        const twitterShareLink = document.querySelector('#share-twitter');
+
+        if(facebookShareLink)
+        {
+        facebookShareLink.href = "https://www.facebook.com/sharer/sharer.php?u=" + prodUrl;
+            }
+        const twitterText = "Checkout " + prod + " at:"
+
+        if(twitterShareLink)
+        {
+        twitterShareLink.href = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(twitterText) + "&url=" + prodUrl;
+            }
+        // countdown timer function
+        var timerStarted = false;
+
+        function startTimer(duration, display) {
+          timerStarted = true;
+          var timer = duration, minutes, seconds;
+          setInterval(function () {
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            display.textContent = minutes + ":" + seconds;
+
+            if (--timer < 0) {
+              timer = 0;
+            }
+          }, 1000);
+        }
+
+        // payment confirmation section
+        const paymentConfirmationSectionPaypal = document.querySelector('#payment-confirmation-section-paypal');
+        const paymentConfirmationSectionCashapp = document.querySelector('#payment-confirmation-section-cashapp');
+        const paymentConfirmationSectionCrypto = document.querySelector('#payment-confirmation-section-crypto');
+        const paymentConfirmationSectionCard = document.querySelector('#payment-confirmation-section-card');
+
+        // const headerInfoText = document.querySelector('#header-info-text');
+        const countdownTimer = document.querySelector('#countdown-timer');
+        const shareSection = document.querySelector('#share-section');
+        const shareSectionLabel = document.querySelector('#share-section-label');
+        const timerBlock = document.querySelector('#timer-block');
+
+        const buttonPaid = document.querySelector('#button-paid');
+
+        if (buttonPaid) {
+          buttonPaid.addEventListener("click", () => {
+            var fiveMinutes = 60 * 5;
+            var display = document.querySelector('#countdown-timer');
+            if (!timerStarted && display.textContent == "05:00") {
+              startTimer(fiveMinutes, display);
+            }
+
+            buttonPaid.classList.add('hidden');
+
+            // headerInfoText.textContent = 'PLEASE WAIT WHILE WE PROCESS YOUR ORDER';
+            timerBlock.classList.remove('hidden');
+            shareSection.classList.remove('hidden');
+            shareSectionLabel.classList.remove('hidden');
+
+            paymentConfirmationSectionPaypal?.classList.add('hidden');
+            paymentConfirmationSectionCashapp?.classList.add('hidden');
+            paymentConfirmationSectionCrypto?.classList.add('hidden');
+          })
+        }
+
+        // If the page has param 'paid' marked as true, directly show paid status of page
+        if (new URLSearchParams(window.location.search).get('paid') == 'true') {
+          var fiveMinutes = 60 * 5;
+          var display = document.querySelector('#countdown-timer');
+          if (!timerStarted && display.textContent == "05:00") {
+            startTimer(fiveMinutes, display);
+          }
+
+          if (buttonPaid) {
+            buttonPaid.classList.add('hidden');
+          }
+          // headerInfoText.textContent = 'PLEASE WAIT WHILE WE PROCESS YOUR ORDER';
+          timerBlock.classList.remove('hidden');
+          shareSection.classList.remove('hidden');
+          shareSectionLabel.classList.remove('hidden');
+
+          paymentConfirmationSectionPaypal?.classList.add('hidden');
+          paymentConfirmationSectionCashapp?.classList.add('hidden');
+          paymentConfirmationSectionCrypto?.classList.add('hidden');
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  </script>
+</div>

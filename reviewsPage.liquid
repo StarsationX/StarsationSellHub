@@ -1,0 +1,125 @@
+<div class="bg-cover bg-center mx-auto w-full max-w-[1400px] px-4 !scroll-smooth">
+  <slot data-id="1" class="min-h-[100px]">
+    <vertical-layout
+      data-id="2a4a9a67-7276-4e3b-a150-1a03ab0fceed"
+      data-slots="5"
+      style="gap: 24px; align-items: center; justify-content: start"
+      data-spacing="36"
+      data-align-items="center"
+      class="pt-4"
+      data-justify-items="start">
+      <div class="flex flex-col gap-4 flex-1 min-h-[calc(100svh-380px-70px-50px)] w-full">
+        <!-- Reviews Heading -->
+        <div class="max-w-2xl mx-auto text-center">
+          <h2 class="text-3xl font-bold leading-tight text-white sm:text-4xl lg:text-5xl">Reviews</h2>
+          <p class="max-w-xl mx-auto mt-2 text-base leading-relaxed text-muted-foreground/60">Here is what our customers             
+            say about us.</p>
+        </div>
+        <!-- Reviews -->
+        <section class="py-6 w-full">
+          <div id="review-form">
+            <skeleton-loader skeleton-count="8">
+              <div class="mx-auto w-full">
+                {% assign arr = storeReviews %}
+                <div class="grid grid-cols-1 gap-6 lg:gap-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 w-full">
+                  {%- for review in arr %}
+                    <div class="flex flex-col bg-muted-foreground/10 rounded-md">
+                      <div class="flex flex-col justify-between flex-1">
+                        <div class="flex-1 p-4">
+                          <blockquote>
+                            <p class="text-base text-muted-foreground">"{{ review.text }}"</p>
+                          </blockquote>
+                        </div>
+
+                        <div class="mt-8 p-4 border-t">
+                          <div class="flex items-end justify-between">
+                            <div class="">
+                              <p class="text-base font-medium text-muted-foreground truncate">Customer</p>
+                              <p class="text-xs truncate text-muted-foreground/70">
+                                {% assign date_string = review.createdAt %}
+                                {{ date_string | date: "%a %b %d %Y" }}
+                              </p>
+                            </div>
+                            <ul class="flex flex-row gap-1">
+                              {% for i in (1..review.rating) %}
+                                <li class="text-[--accent-color]">
+                                  <svg
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="m11.443 19.478-4.328 2.378c-.584.321-1.307.086-1.615-.524a1.3 1.3 0 0 1-.12-.793l.827-5.037a1.29 1.29 0 0 0-.344-1.106L2.36 10.83a1.29 1.29 0 0 1-.021-1.767c.183-.197.424-.325.684-.364l4.839-.735c.39-.06.726-.315.9-.684l2.165-4.582c.292-.619 1.009-.873 1.601-.568.236.122.427.321.543.568l2.164 4.582c.175.369.511.625.901.684l4.839.735c.654.099 1.106.733 1.011 1.416a1.27 1.27 0 0 1-.348.715l-3.502 3.567c-.282.287-.41.7-.344 1.106l.827 5.037c.112.68-.326 1.326-.977 1.443a1.15 1.15 0 0 1-.758-.126l-4.328-2.378a1.15 1.15 0 0 0-1.114 0" /></svg>
+                                </li>
+                              {% endfor %}
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  {%- endfor %}
+                </div>
+              </div>
+
+              <div className="pagination-controls flex justify-center items-center mt-[47px] gap-4">
+                {% assign prevPage = currentPage | minus: 1 %}
+                {% assign nextPage = currentPage | plus: 1 %}
+                <a
+                  href="?page={{ prevPage }}"
+                  class="flex items-center justify-center h-6 px-2 py-4 bg-accent rounded-md hover:bg-[--accent-color]
+           {% if currentPage == 1 %}pointer-events-none opacity-50{% endif %}"
+                  {% if currentPage == 1 %}
+                  aria-disabled="true"
+                  tabindex="-1"
+                  {% endif %}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-chevron-left">
+                    <path d="m15 18-6-6 6-6" />
+                  </svg>
+                </a>
+                <span id="current-page-display" className="border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md border px-3 py-2 text-xs duration-200">
+                  {{ currentPage }} of {{ totalPages }}
+                </span>
+                <input
+                  type="hidden"
+                  id="current-page"
+                  name="currentPage"
+                  value="{{ currentPage }}">
+
+                <a
+                  href="?page={{ nextPage }}"
+                  class="flex items-center justify-center h-6 px-2 py-4 bg-accent rounded-md hover:bg-[--accent-color]
+           {% if currentPage == totalPages %}pointer-events-none opacity-50{% endif %}"
+                  {% if currentPage == totalPages %}
+                  aria-disabled="true"
+                  tabindex="-1"
+                  {% endif %}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-chevron-right">
+                    <path d="m9 18 6-6-6-6" />
+                  </svg>
+                </a>
+              </div>
+            </skeleton-loader>
+          </div>
+        </section>
+      </div>
+    </vertical-layout>
+  </slot>
+</div>
