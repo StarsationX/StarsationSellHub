@@ -60,7 +60,7 @@
             </div>
           </div>
           <div class="text-lg font-semibold text-white">Choose Payment Method</div>
-          <div class="flex flex-col gap-4" id="payment_div">
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-3" id="payment_div">
             <!-- Payment Plugins -->
             {% for plugin in paymentPlugins %}
             {% if plugin.isActive %}
@@ -91,7 +91,7 @@
               </div>
             </div>
             {% endfor %}
-            <div id="payment_method_skeletons" class="flex flex-col gap-4">
+            <div id="payment_method_skeletons" class="flex flex-col gap-4 md:col-span-3">
               <skeleton class="w-full h-[58px]"></skeleton>
               <skeleton class="w-full h-[58px]"></skeleton>
               <skeleton class="w-full h-[58px]"></skeleton>
