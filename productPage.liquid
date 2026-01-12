@@ -1,4 +1,5 @@
-<div class="bg-cover bg-center mx-auto w-full max-w-[1400px] px-4 !scroll-smooth relative">
+<div class="bg-cover bg-center mx-auto w-full max-w-[1400px] px-4 !scroll-smooth relative overflow-hidden">
+  <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.12),transparent_55%),radial-gradient(circle_at_75%_20%,_rgba(124,58,237,0.12),transparent_45%)]"></div>
   <slot data-id="1" class="min-h-[100px]">
     <breadcrumb item-class="capitalize" class="mt-10"></breadcrumb>
     <vertical-layout
@@ -7,11 +8,11 @@
       style="gap: 24px; align-items: center; justify-content: start"
       data-spacing="36"
       data-align-items="center"
-      class="pt-4"
+      class="pt-4 relative z-10"
       data-justify-items="start">
       <div class="mt-4 flex flex-col md:flex-row gap-6 min-h-[calc(100svh-380px-70px-50px)] w-full">
         <!-- Product Image -->
-        <div class="w-full md:w-1/2 flex flex-col md:sticky md:top-20 h-fit">
+        <div class="w-full md:w-1/2 flex flex-col md:sticky md:top-20 h-fit rounded-2xl border border-white/10 bg-white/5 p-4 shadow-[0_18px_60px_-35px_rgba(59,130,246,0.7)] backdrop-blur">
           {% assign arr = product.images %}
           {% if product.images.length == 0 %}
             <fade-in-image
@@ -94,17 +95,17 @@
                   src="{{ image }}"
                   width="600"
                   height="400"
-                  class="h-20 sm:h-24 w-full overflow-hidden object-cover rounded-xl"></fade-in-image>
+                  class="h-20 sm:h-24 w-full overflow-hidden object-cover rounded-xl transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-lg"></fade-in-image>
               {% endif %}
             {%- endfor %}
           </div>
 
           {% if upsellProducts.length > 0 %}
-            <div class="mt-4 flex flex-col gap-4">
-              <span class="text-sm text-muted-foreground/70">People have also bought:</span>
+            <div class="mt-6 flex flex-col gap-4">
+              <span class="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">People have also bought</span>
               <div class="flex flex-col gap-4">
                 {% for upsell in upsellProducts %}
-                  <div class="border p-2 rounded-lg flex flex-row gap-4">
+                  <div class="border border-white/10 bg-white/5 p-2 rounded-xl flex flex-row gap-4 transition duration-300 hover:-translate-y-0.5 hover:border-white/20">
                     <fade-in-image
                       alt="upselling product image"
                       src="{{ upsell.recommendedProduct.images[0] | default: '/images/no_image_placeholder.png' }}"
@@ -134,13 +135,13 @@
           {% endif %}
         </div>
         <!-- Product Variants, Pricing Stuffs -->
-        <div class="w-full md:w-1/2 flex flex-col gap-4">
+        <div class="w-full md:w-1/2 flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/5 p-6 shadow-[0_18px_60px_-35px_rgba(147,197,253,0.7)] backdrop-blur">
           <!-- Product Add Ons - -->
           <div>
             <accordion class="flex flex-col divide-y">
               {% for addon in productAddons %}
                 <accordion-item value="{{ addon.id }}" class="flex flex-col border-none first:rounded-t-md last:rounded-b-md overflow-hidden">
-                  <accordion-trigger hide-chevron="true" class="p-2 flex flex-row w-full items-center justify-between bg-accent/20 hover:bg-accent/50 data-[state=open]:bg-accent/50">
+                  <accordion-trigger hide-chevron="true" class="p-2 flex flex-row w-full items-center justify-between bg-accent/20 hover:bg-accent/50 data-[state=open]:bg-accent/50 transition-colors duration-300">
                     <div class="text-sm flex flex-row gap-4">
                       <span class="text-white text-sm flex flex-row items-center">{{ addon.name }}</span>
                     </div>
@@ -152,7 +153,7 @@
                         id="productAddonsBtn"
                         data-id="{{ addon.id }}"
                         type="submit"
-                        class="min-w-[93px] text-xs px-3 h-6 rounded-md text-white bg-[--accent-color] hover:bg-[--dark-accent-color] font-semibold duration-200 shrink-0">
+                        class="min-w-[93px] text-xs px-3 h-6 rounded-md text-white bg-[--accent-color] hover:bg-[--dark-accent-color] font-semibold duration-200 shrink-0 transition-transform hover:-translate-y-0.5">
                         + Add
                       </button>
                     </div>
@@ -166,8 +167,11 @@
               {% endfor %}
             </accordion>
           </div>
-          <h1 class="text-3xl font-semibold text-white">{{ product.name }}</h1>
-          <p class="text-sm whitespace-pre-wrap text-muted-foreground/70">{{ product.shortDescription }}</p>
+          <div class="flex flex-col gap-2">
+            <span class="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">Product overview</span>
+            <h1 class="text-3xl font-semibold text-white">{{ product.name }}</h1>
+            <p class="text-sm whitespace-pre-wrap text-muted-foreground/70">{{ product.shortDescription }}</p>
+          </div>
 
           {% if product.averageStars > 0 %}
             <div class="flex flex-row items-center gap-2">
@@ -198,7 +202,7 @@
             </div>
           {% endif %}
           <!-- Pricing -->
-          <div class="w-full flex flex-row justify-between items-end gap-4">
+          <div class="w-full flex flex-col gap-4 rounded-xl border border-white/10 bg-white/5 p-4 sm:flex-row sm:items-end sm:justify-between">
             <div class="flex flex-row items-center gap-4">
               {% if product.payWhatYouWantEnabled == false %}
                 <div class="flex flex-col items-start text-sm">
@@ -234,7 +238,7 @@
             <div class="flex flex-row items-center gap-4">
               <span class="text-sm text-muted-foreground/70">Quantity:</span>
               <div class="flex flex-row gap-4 items-center">
-                <button id="decrement" class="px-3 py-1.5 bg-accent rounded-md">-</button>
+                <button id="decrement" class="px-3 py-1.5 bg-accent rounded-md transition-transform duration-300 hover:-translate-y-0.5">-</button>
                 <input 
                   id="quantity" 
                   type="number"
@@ -242,12 +246,12 @@
                   value="1"
                   class="w-12 text-center text-white text-sm bg-accent/30 rounded-md px-2 py-1.5"
                 >
-                <button id="increment" class="px-3 py-1.5 bg-accent rounded-md">+</button>
+                <button id="increment" class="px-3 py-1.5 bg-accent rounded-md transition-transform duration-300 hover:-translate-y-0.5">+</button>
               </div>
             </div>
           </div>
           {% if liveStats %}
-            <div class="bg-white/5 p-4 rounded-lg flex flex-col gap-4">
+            <div class="bg-gradient-to-br from-white/10 via-white/5 to-transparent p-4 rounded-xl border border-white/10 flex flex-col gap-4">
               <div class="flex flex-col gap-1 text-xs text-muted-foreground/80">
                 <div class="flex items-center gap-2">
                   <svg
@@ -348,7 +352,7 @@
             </dialog>
           {% endif %}
           <!-- Product Variants -->
-          <div class="text-sm text-muted-foreground/70">Variants:</div>
+          <div class="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">Variants</div>
           <div class="flex flex-col gap-4">
             {% for variant in product.productVariants %}
               <div
@@ -364,7 +368,7 @@
                 data-variant-min-quantity="{{ variant.minOrderQuantity }}"
                 data-variant-max-quantity="{{ variant.maxOrderQuantity }}"
                 type="submit"
-                class="cursor-pointer w-full p-4 flex flex-col rounded-lg bg-transparent border hover:bg-accent/30 duration-300 {% if variant.id == product.productVariants[0].id %}border-[--accent-color]{% else %}border-muted-foreground/30{% endif %}"
+                class="cursor-pointer w-full p-4 flex flex-col rounded-xl bg-white/5 border hover:bg-accent/30 duration-300 transition-transform hover:-translate-y-0.5 {% if variant.id == product.productVariants[0].id %}border-[--accent-color]{% else %}border-white/10{% endif %}"
                 variant="outline">
                 <span class="text-sm font-semibold">{{ variant.name }}</span>
                 <p class="text-xs text-muted-foreground/70">{{ variant.shortDescription }}</p>
@@ -424,19 +428,19 @@
                   class="flex flex-col gap-4"
                   id="bundles-{{ variant.id }}"
                   style="display: {%- if forloop.first == true -%} flex {%- else -%} none {%- endif -%};">
-                  <div class="text-sm text-muted-foreground/70">Available Bundles:</div>
+                  <div class="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">Available Bundles</div>
                   <!-- Show accordion if bundles length is more than 1 bundle -->
                   {% if variant.bundleVariants.length > 1 %}
                     <accordion class="flex flex-col gap-2">
                       <accordion-item value="1" class="flex flex-col border-none">
-                        <accordion-trigger class="rounded-lg p-4 flex flex-row items-center justify-between bg-accent/50">
+                        <accordion-trigger class="rounded-xl p-4 flex flex-row items-center justify-between bg-accent/50 transition-colors duration-300 hover:bg-accent/70">
                           <div class="text-sm flex flex-row gap-4">
                             <span class="text-white flex flex-row items-center">View {{ variant.bundleVariants.length }} Bundles</span>
                           </div>
                         </accordion-trigger>
                         <accordion-content class="py-4 flex flex-col gap-4">
                           {% for bundleInfo in variant.bundleVariants %}
-                            <div class="w-full p-4 gap-2 flex flex-col rounded-lg bg-transparent border duration-300" variant="outline">
+                            <div class="w-full p-4 gap-2 flex flex-col rounded-xl bg-white/5 border border-white/10 duration-300 transition-transform hover:-translate-y-0.5" variant="outline">
                               <div class="flex flex-row items-center justify-between">
                                 <span class="text-sm font-semibold">{{ bundleInfo.bundle.name }}</span>
                                 <span class="text-xs px-2 py-1 rounded-md bg-[--light-accent-color] text-[--accent-color]">
@@ -486,7 +490,7 @@
                                   <custom-optimistic-button
                                     id="bundle-add-to-cart"
                                     type="submit"
-                                    class="min-w-[93px] text-xs px-3 h-8 rounded-md text-white bg-[--accent-color] hover:bg-[--dark-accent-color] duration-200 shrink-0">
+                                    class="min-w-[93px] text-xs px-3 h-8 rounded-md text-white bg-[--accent-color] hover:bg-[--dark-accent-color] duration-200 shrink-0 transition-transform hover:-translate-y-0.5">
                                     Add To Cart
                                   </custom-optimistic-button>
                                 </div>
@@ -499,7 +503,7 @@
                   {% else %}
                     <!-- Else show normal bundles without dropdown if bundles are only 1 -->
                     {% for bundleInfo in variant.bundleVariants %}
-                      <div class="w-full p-4 gap-2 flex flex-col rounded-lg bg-transparent border duration-300" variant="outline">
+                      <div class="w-full p-4 gap-2 flex flex-col rounded-xl bg-white/5 border border-white/10 duration-300 transition-transform hover:-translate-y-0.5" variant="outline">
                         <div class="flex flex-row items-center justify-between">
                           <span class="text-sm font-semibold">{{ bundleInfo.bundle.name }}</span>
                           <span class="text-xs px-2 py-1 rounded-md bg-[--light-accent-color] text-[--accent-color]">
@@ -550,11 +554,11 @@
                                 name="coupon"
                                 type="text"
                                 placeholder="Enter Coupon Code"
-                                class="flex-1 rounded-md mr-2">
+                                class="flex-1 rounded-md mr-2 bg-accent/30 border border-white/10">
                               <custom-optimistic-button
                                 id="bundle-add-to-cart"
                                 type="submit"
-                                class="min-w-[93px] text-xs px-3 h-8 rounded-md text-white bg-[--accent-color] hover:bg-[--dark-accent-color] duration-200 shrink-0">
+                                class="min-w-[93px] text-xs px-3 h-8 rounded-md text-white bg-[--accent-color] hover:bg-[--dark-accent-color] duration-200 shrink-0 transition-transform hover:-translate-y-0.5">
                                 Add To Cart
                               </custom-optimistic-button>
                             </div>
@@ -569,13 +573,13 @@
           </div>
 
           <!-- Product Cupon Code -->
-          <div class="text-sm text-muted-foreground/70">Coupon:</div>
+          <div class="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">Coupon</div>
           <div class="flex flex-row items-center gap-4">
             <input
               id="enter_coupon_field"
               type="text"
               placeholder="Enter Coupon Code"
-              class="w-full p-4 rounded-md bg-accent/30">
+              class="w-full p-4 rounded-xl bg-accent/30 border border-white/10 focus:border-white/30 transition">
           </div>
 
           <!-- Add to Cart Button & Checkout Btn -->
@@ -607,7 +611,7 @@
                 id="checkout-button"
                 href="/checkout"
                 type="submit"
-                class="w-full space-x-2 bg-[--accent-color] hover:bg-[--dark-accent-color]"
+                class="w-full space-x-2 bg-[--accent-color] hover:bg-[--dark-accent-color] transition-transform duration-300 hover:-translate-y-0.5"
                 variant="default">
                 <div id="checkout-button-text" class="flex flex-row items-center gap-2">
                   <svg
@@ -648,7 +652,7 @@
               <custom-optimistic-button
                 id="add-to-cart-button"
                 type="submit"
-                class="w-full bg-accent hover:bg-accent/80"
+                class="w-full bg-accent hover:bg-accent/80 transition-transform duration-300 hover:-translate-y-0.5"
                 variant="outline">
                 <div id="add-to-cart-button-text" class="flex flex-row items-center gap-2">
                   <svg
@@ -676,7 +680,7 @@
           <express-checkout-frame dark-mode="true"></express-checkout-frame>
 
           <!-- Product Status -->
-          <div class="text-sm p-4 rounded-md  bg-[--light-accent-color] text-[--accent-color]">
+          <div class="text-sm p-4 rounded-xl bg-[--light-accent-color] text-[--accent-color] border border-white/10">
             <div class="flex whitespace-pre-wrap overflow-x-scroll [&>div]:w-full">
               <format-markdown content="{{ product.displayedStatus | escape }}"></format-markdown>
             </div>
@@ -684,8 +688,8 @@
 
           <!-- Product Desscription MD Formatter -->
           <div class="flex flex-col gap-4">
-            <div class="text-sm text-muted-foreground/70">Description :</div>
-            <div class="flex p-4 rounded-md whitespace-pre-wrap bg-accent/50 overflow-x-scroll">
+            <div class="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">Description</div>
+            <div class="flex p-4 rounded-xl whitespace-pre-wrap bg-accent/30 border border-white/10 overflow-x-scroll">
               <format-markdown content="{{ product.description | escape }}"></format-markdown>
             </div>
           </div>
