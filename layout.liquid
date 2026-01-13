@@ -57,31 +57,21 @@
   <div class="flex flex-col gap-2 fixed bottom-2 right-2 z-20">
     {%- for social in arr %}
     {% if social.name == 'discord' %}
-    <div class="flex items-center justify-center group relative text-white">
-      <div class="rounded-full flex items-center justify-center w-12 h-12 bg-[#6571ff]">
-        <svg class="group-hover:scale-[1.4] duration-300" width="20" height="20" viewBox="0 0 32 32"
-          fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-          <path
-            d="M20.992 20.163a2.884 2.884 0 0 1-2.695-3.03v.007a2.867 2.867 0 0 1 2.687-3.023h.008a2.85 2.85 0 0 1 2.695 3.031v-.008a2.86 2.86 0 0 1-2.688 3.022h-.008zm-9.966 0a2.884 2.884 0 0 1-2.695-3.03v.007a2.867 2.867 0 0 1 2.687-3.023h.008a2.85 2.85 0 0 1 2.695 3.031v-.008q.005.074.005.161a2.867 2.867 0 0 1-2.692 2.862zM26.393 6.465c-1.763-.832-3.811-1.49-5.955-1.871l-.149-.022-.017-.002a.09.09 0 0 0-.081.047c-.234.411-.488.924-.717 1.45l-.043.111a23 23 0 0 0-6.985.016l.129-.017c-.27-.63-.528-1.142-.813-1.638l.041.077a.1.1 0 0 0-.083-.047l-.016.001h.001a24.6 24.6 0 0 0-6.256 1.957l.151-.064a.1.1 0 0 0-.04.034C2.706 10.538.998 15.566.998 20.993q0 1.36.141 2.684l-.009-.11a.1.1 0 0 0 .039.07 24.6 24.6 0 0 0 7.313 3.738l.176.048a.1.1 0 0 0 .028.004q.05-.002.077-.038a17.5 17.5 0 0 0 1.485-2.392l.047-.1a.096.096 0 0 0-.052-.132h-.001a16 16 0 0 1-2.417-1.157l.077.042a.1.1 0 0 1-.048-.083c0-.031.015-.059.038-.076.157-.118.315-.24.465-.364a.1.1 0 0 1 .097-.013h-.001c2.208 1.061 4.8 1.681 7.536 1.681s5.329-.62 7.643-1.727l-.107.046a.1.1 0 0 1 .099.012q.226.188.466.365a.1.1 0 0 1 .038.077.1.1 0 0 1-.046.082c-.661.395-1.432.769-2.235 1.078l-.105.036a.1.1 0 0 0-.062.089q0 .024.011.044v-.001c.501.96 1.009 1.775 1.571 2.548l-.04-.057a.1.1 0 0 0 .106.036h-.001c2.865-.892 5.358-2.182 7.566-3.832l-.065.047a.1.1 0 0 0 .039-.069c.087-.784.136-1.694.136-2.615 0-5.415-1.712-10.43-4.623-14.534l.052.078a.1.1 0 0 0-.038-.036z" />
-        </svg>
-      </div>
-      <div
-        class="absolute bottom-0 right-full mr-3 flex flex-col gap-2 opacity-0 pointer-events-none translate-y-2 transition duration-200 group-hover:opacity-100 group-hover:pointer-events-auto group-hover:translate-y-0">
-        <a href="https://discord.gg/Axonhub" target="_blank" rel="noreferrer"
-          class="flex items-center gap-3 rounded-full bg-white/10 border border-white/10 px-3 py-2 text-xs font-semibold tracking-wide uppercase hover:bg-white/20">
+    <div class="flex items-center justify-center gap-2">
+      <a href="{{ social.url }}" aria-label="Axon Hub Discord" class="text-white">
+        <div class="rounded-full flex items-center justify-center w-12 h-12 bg-white/10">
           <img
             src="https://cdn.discordapp.com/attachments/1333922302399615047/1460550140241641657/image.png?ex=696752d1&is=69660151&hm=53187ccffbd1ccae83c715ecc747f166d42276079c5f1063127724220c9ff2c0&"
-            alt="Axon Hub" class="h-6 w-6 rounded-full object-contain" />
-          <span>Axon Hub</span>
-        </a>
-        <a href="https://discord.gg/CAEEmHnNV5" target="_blank" rel="noreferrer"
-          class="flex items-center gap-3 rounded-full bg-white/10 border border-white/10 px-3 py-2 text-xs font-semibold tracking-wide uppercase hover:bg-white/20">
+            alt="Axon Hub" class="h-6 w-6 object-contain" />
+        </div>
+      </a>
+      <a href="{{ social.url }}" aria-label="Xenith Executor Discord" class="text-white">
+        <div class="rounded-full flex items-center justify-center w-12 h-12 bg-white/10">
           <img
             src="https://cdn.discordapp.com/attachments/1333922302399615047/1460550315525935136/Xenith_logo_1_27.png?ex=696752fa&is=6966017a&hm=1a86159a5b810ffa2c11bbed06c2128a7883f8db26f48898f6e8eb10e41cadd1&"
-            alt="Xenith Executor" class="h-6 w-6 rounded-full object-contain" />
-          <span>Xenith Executor</span>
-        </a>
-      </div>
+            alt="Xenith Executor" class="h-6 w-6 object-contain" />
+        </div>
+      </a>
     </div>
     {% else %}
     <a href="{{ social.url }}" aria-label="{{ social.name }}" class="text-white">
@@ -139,17 +129,33 @@
               {% assign arr = socials %}
               <div class="flex flex-row flex-wrap gap-3">
                 {%- for social in arr %}
+                {% if social.name == 'discord' %}
+                <div class="flex flex-wrap items-center gap-2">
+                  <a href="{{ social.url }}" aria-label="Axon Hub Discord"
+                    class="text-white transition duration-200 hover:text-[--accent-color]">
+                    <div
+                      class="flex items-center justify-center w-9 h-9 bg-white/5 border border-white/10 rounded-full transition duration-200 hover:border-[--accent-color]/60 hover:bg-white/10">
+                      <img
+                        src="https://cdn.discordapp.com/attachments/1333922302399615047/1460550140241641657/image.png?ex=696752d1&is=69660151&hm=53187ccffbd1ccae83c715ecc747f166d42276079c5f1063127724220c9ff2c0&"
+                        alt="Axon Hub" class="h-5 w-5 object-contain" />
+                    </div>
+                  </a>
+                  <a href="{{ social.url }}" aria-label="Xenith Executor Discord"
+                    class="text-white transition duration-200 hover:text-[--accent-color]">
+                    <div
+                      class="flex items-center justify-center w-9 h-9 bg-white/5 border border-white/10 rounded-full transition duration-200 hover:border-[--accent-color]/60 hover:bg-white/10">
+                      <img
+                        src="https://cdn.discordapp.com/attachments/1333922302399615047/1460550315525935136/Xenith_logo_1_27.png?ex=696752fa&is=6966017a&hm=1a86159a5b810ffa2c11bbed06c2128a7883f8db26f48898f6e8eb10e41cadd1&"
+                        alt="Xenith Executor" class="h-5 w-5 object-contain" />
+                    </div>
+                  </a>
+                </div>
+                {% else %}
                 <a href="{{ social.url }}" aria-label="{{ social.name }}"
                   class="text-white transition duration-200 hover:text-[--accent-color]">
                   <div
                     class="flex items-center justify-center w-9 h-9 bg-white/5 border border-white/10 rounded-full group transition duration-200 hover:border-[--accent-color]/60 hover:bg-white/10">
-                    {% if social.name == 'discord' %}
-                    <svg class="group-hover:text-[--accent-color] duration-200" width="16" height="16"
-                      viewBox="0 0 32 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                      <path
-                        d="M20.992 20.163a2.884 2.884 0 0 1-2.695-3.03v.007a2.867 2.867 0 0 1 2.687-3.023h.008a2.85 2.85 0 0 1 2.695 3.031v-.008a2.86 2.86 0 0 1-2.688 3.022h-.008zm-9.966 0a2.884 2.884 0 0 1-2.695-3.03v.007a2.867 2.867 0 0 1 2.687-3.023h.008a2.85 2.85 0 0 1 2.695 3.031v-.008q.005.074.005.161a2.867 2.867 0 0 1-2.692 2.862zM26.393 6.465c-1.763-.832-3.811-1.49-5.955-1.871l-.149-.022-.017-.002a.09.09 0 0 0-.081.047c-.234.411-.488.924-.717 1.45l-.043.111a23 23 0 0 0-6.985.016l.129-.017c-.27-.63-.528-1.142-.813-1.638l.041.077a.1.1 0 0 0-.083-.047l-.016.001h.001a24.6 24.6 0 0 0-6.256 1.957l.151-.064a.1.1 0 0 0-.04.034C2.706 10.538.998 15.566.998 20.993q0 1.36.141 2.684l-.009-.11a.1.1 0 0 0 .039.07 24.6 24.6 0 0 0 7.313 3.738l.176.048a.1.1 0 0 0 .028.004q.05-.002.077-.038a17.5 17.5 0 0 0 1.485-2.392l.047-.1a.096.096 0 0 0-.052-.132h-.001a16 16 0 0 1-2.417-1.157l.077.042a.1.1 0 0 1-.048-.083c0-.031.015-.059.038-.076.157-.118.315-.24.465-.364a.1.1 0 0 1 .097-.013h-.001c2.208 1.061 4.8 1.681 7.536 1.681s5.329-.62 7.643-1.727l-.107.046a.1.1 0 0 1 .099.012q.226.188.466.365a.1.1 0 0 1 .038.077.1.1 0 0 1-.046.082c-.661.395-1.432.769-2.235 1.078l-.105.036a.1.1 0 0 0-.062.089q0 .024.011.044v-.001c.501.96 1.009 1.775 1.571 2.548l-.04-.057a.1.1 0 0 0 .106.036h-.001c2.865-.892 5.358-2.182 7.566-3.832l-.065.047a.1.1 0 0 0 .039-.069c.087-.784.136-1.694.136-2.615 0-5.415-1.712-10.43-4.623-14.534l.052.078a.1.1 0 0 0-.038-.036z" />
-                    </svg>
-                    {% elsif social.name == 'telegram' %}
+                    {% if social.name == 'telegram' %}
                     <svg class="group-hover:text-[--accent-color] duration-200" width="16" height="16"
                       viewBox="0 0 48 48" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                       <path
@@ -172,6 +178,7 @@
                     {% endif %}
                   </div>
                 </a>
+                {% endif %}
                 {%- endfor %}
                 </div>
               </div>
