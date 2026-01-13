@@ -102,44 +102,46 @@
   <outlet></outlet>
   <!-- Footer -->
   <div class="w-full mx-auto max-w-[1400px]">
-    <div class="py-4 sm:pt-16 lg:pt-24 w-full px-4">
-      <div class="mx-auto">
-        <div class="grid grid-cols-2 md:col-span-3 lg:grid-cols-6 gap-y-16 gap-x-12">
-          <div class="col-span-2 md:col-span-3 lg:col-span-4 lg:pr-8">
-            <div class="flex flex-row items-center gap-2 w-fit md:min-w-[203px]">
+    <div class="py-10 sm:py-16 lg:py-20 w-full px-4">
+      <div class="mx-auto rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.04] via-white/[0.02] to-transparent px-6 py-10 sm:px-10">
+        <div class="flex flex-col gap-10 lg:flex-row lg:items-start lg:justify-between">
+          <div class="flex-1 lg:max-w-xl lg:pr-8">
+            <div class="flex flex-row items-center gap-3 w-fit">
               <fade-in-image alt="website logo" src="{{ image }}"
-                class="h-8 w-8 rounded-full object-contain"></fade-in-image>
-              <span class="text-xl font-bold hidden sm:inline-block">
+                class="h-9 w-9 rounded-full object-contain ring-1 ring-white/10 shadow-[0_0_20px_rgba(255,255,255,0.08)]"></fade-in-image>
+              <span class="text-xl font-semibold tracking-wide hidden sm:inline-block text-white">
                 {{ name }}
               </span>
             </div>
-            <p class="text-sm leading-relaxed text-muted-foreground/70 mt-7 max-w-lg">{{ description }}</p>
-            <ul class="mt-9">
+            <p class="text-sm leading-relaxed text-muted-foreground/70 mt-6 max-w-lg">{{ description }}</p>
+            <ul class="mt-6">
               {% assign arr = socials %}
-              <div class="flex flex-row space-x-3">
+              <div class="flex flex-row flex-wrap gap-3">
                 {%- for social in arr %}
-                <a href="{{ social.url }}" aria-label="{{ social.name }}" class="text-white">
-                  <div class="flex items-center justify-center w-7 h-7 bg-muted-foreground/50/20 rounded-full group">
+                <a href="{{ social.url }}" aria-label="{{ social.name }}"
+                  class="text-white transition duration-200 hover:text-[--accent-color]">
+                  <div
+                    class="flex items-center justify-center w-9 h-9 bg-white/5 border border-white/10 rounded-full group transition duration-200 hover:border-[--accent-color]/60 hover:bg-white/10 hover:shadow-[0_0_18px_rgba(255,255,255,0.15)]">
                     {% if social.name == 'discord' %}
-                    <svg class="group-hover:text-[--accent-color] duration-200" width="14" height="14"
+                    <svg class="group-hover:text-[--accent-color] duration-200" width="16" height="16"
                       viewBox="0 0 32 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                       <path
                         d="M20.992 20.163a2.884 2.884 0 0 1-2.695-3.03v.007a2.867 2.867 0 0 1 2.687-3.023h.008a2.85 2.85 0 0 1 2.695 3.031v-.008a2.86 2.86 0 0 1-2.688 3.022h-.008zm-9.966 0a2.884 2.884 0 0 1-2.695-3.03v.007a2.867 2.867 0 0 1 2.687-3.023h.008a2.85 2.85 0 0 1 2.695 3.031v-.008q.005.074.005.161a2.867 2.867 0 0 1-2.692 2.862zM26.393 6.465c-1.763-.832-3.811-1.49-5.955-1.871l-.149-.022-.017-.002a.09.09 0 0 0-.081.047c-.234.411-.488.924-.717 1.45l-.043.111a23 23 0 0 0-6.985.016l.129-.017c-.27-.63-.528-1.142-.813-1.638l.041.077a.1.1 0 0 0-.083-.047l-.016.001h.001a24.6 24.6 0 0 0-6.256 1.957l.151-.064a.1.1 0 0 0-.04.034C2.706 10.538.998 15.566.998 20.993q0 1.36.141 2.684l-.009-.11a.1.1 0 0 0 .039.07 24.6 24.6 0 0 0 7.313 3.738l.176.048a.1.1 0 0 0 .028.004q.05-.002.077-.038a17.5 17.5 0 0 0 1.485-2.392l.047-.1a.096.096 0 0 0-.052-.132h-.001a16 16 0 0 1-2.417-1.157l.077.042a.1.1 0 0 1-.048-.083c0-.031.015-.059.038-.076.157-.118.315-.24.465-.364a.1.1 0 0 1 .097-.013h-.001c2.208 1.061 4.8 1.681 7.536 1.681s5.329-.62 7.643-1.727l-.107.046a.1.1 0 0 1 .099.012q.226.188.466.365a.1.1 0 0 1 .038.077.1.1 0 0 1-.046.082c-.661.395-1.432.769-2.235 1.078l-.105.036a.1.1 0 0 0-.062.089q0 .024.011.044v-.001c.501.96 1.009 1.775 1.571 2.548l-.04-.057a.1.1 0 0 0 .106.036h-.001c2.865-.892 5.358-2.182 7.566-3.832l-.065.047a.1.1 0 0 0 .039-.069c.087-.784.136-1.694.136-2.615 0-5.415-1.712-10.43-4.623-14.534l.052.078a.1.1 0 0 0-.038-.036z" />
                     </svg>
                     {% elsif social.name == 'telegram' %}
-                    <svg class="group-hover:text-[--accent-color] duration-200" width="14" height="14"
+                    <svg class="group-hover:text-[--accent-color] duration-200" width="16" height="16"
                       viewBox="0 0 48 48" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                       <path
                         d="M41.42 7.309s3.885-1.515 3.56 2.164c-.107 1.515-1.078 6.818-1.834 12.553l-2.59 16.99s-.216 2.489-2.159 2.922c-1.942.432-4.856-1.515-5.396-1.948-.432-.325-8.094-5.195-10.792-7.575-.756-.65-1.62-1.948.108-3.463L33.649 18.13c1.295-1.3 2.59-4.33-2.806-.65l-15.11 10.28s-1.727 1.083-4.964.109l-7.016-2.165s-2.59-1.623 1.835-3.246c10.793-5.086 24.068-10.28 35.831-15.15" />
                     </svg>
                     {% elsif social.name == 'tiktok' %}
-                    <svg class="group-hover:text-[--accent-color] duration-200" width="14" height="14"
+                    <svg class="group-hover:text-[--accent-color] duration-200" width="16" height="16"
                       viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                       <path
                         d="M21 7v2a1 1 0 0 1-1 1 8 8 0 0 1-4-1.08v6.58a6.5 6.5 0 1 1-9.47-5.78 1 1 0 0 1 1.47.9v2.52a.92.92 0 0 1-.28.62 2.49 2.49 0 0 0 2 4.23A2.61 2.61 0 0 0 12 15.35V3a1 1 0 0 1 1-1h2.11a1 1 0 0 1 1 .83A4 4 0 0 0 20 6a1 1 0 0 1 1 1" />
                     </svg>
                     {% elsif social.name == 'youtube' %}
-                    <svg class="group-hover:text-[--accent-color] duration-200" width="14" height="14"
+                    <svg class="group-hover:text-[--accent-color] duration-200" width="16" height="16"
                       viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
                       <path
                         d="M23 9.71a8.5 8.5 0 0 0-.91-4.13 2.92 2.92 0 0 0-1.72-1A78 78 0 0 0 12 4.27a79 79 0 0 0-8.34.3 2.87 2.87 0 0 0-1.46.74c-.9.83-1 2.25-1.1 3.45a48 48 0 0 0 0 6.48 9.6 9.6 0 0 0 .3 2 3.14 3.14 0 0 0 .71 1.36 2.86 2.86 0 0 0 1.49.78 45 45 0 0 0 6.5.33c3.5.05 6.57 0 10.2-.28a2.9 2.9 0 0 0 1.53-.78 2.5 2.5 0 0 0 .61-1 10.6 10.6 0 0 0 .52-3.4c.04-.56.04-3.94.04-4.54M9.74 14.85V8.66l5.92 3.11c-1.66.92-3.85 1.96-5.92 3.08" />
@@ -154,57 +156,60 @@
               </div>
             </ul>
           </div>
-          <div>
-            <p class="text-sm font-semibold tracking-widest text-[--accent-color] uppercase">OUR SHOP
-            </p>
-            <ul class="mt-6 space-y-4">
-              <li>
-                <a href="#" title=""
-                  class="flex text-sm text-muted-foreground/70 transition-all duration-200 hover:text-[--accent-color] focus:text-[--accent-color]">
-                  About Us
-                </a>
-              </li>
-              <li>
-                <a href="/#how-it-works" title=""
-                  class="flex text-sm text-muted-foreground/70 transition-all duration-200 hover:text-[--accent-color] focus:text-[--accent-color]">
-                  How it works
-                </a>
-              </li>
-              <li>
-                <a href="/#faq" title=""
-                  class="flex text-sm text-muted-foreground/70 transition-all duration-200 hover:text-[--accent-color] focus:text-[--accent-color]">
-                  FAQ
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <p class="text-sm font-semibold tracking-widest text-[--accent-color] uppercase">HELP</p>
-            <ul class="mt-6 space-y-4">
-              <li>
-                <a href="https://discord.com" title=""
-                  class="flex text-sm text-muted-foreground/70 transition-all duration-200 hover:text-[--accent-color] focus:text-[--accent-color]">
-                  Support
-                </a>
-              </li>
-              <li>
-                <a href="/tos" title=""
-                  class="flex text-sm text-muted-foreground/70 transition-all duration-200 hover:text-[--accent-color] focus:text-[--accent-color]">
-                  Terms & Conditions
-                </a>
-              </li>
-              <li>
-                <a href="/tos" title=""
-                  class="flex text-sm text-muted-foreground/70 transition-all duration-200 hover:text-[--accent-color] focus:text-[--accent-color]">
-                  Refund Policy
-                </a>
-              </li>
-            </ul>
+          <div class="flex flex-1 flex-col gap-8 sm:flex-row sm:justify-end sm:gap-12 lg:gap-16">
+            <div>
+              <p class="text-xs font-semibold tracking-[0.3em] text-[--accent-color] uppercase">Our shop</p>
+              <ul class="mt-4 flex flex-col gap-3">
+                <li>
+                  <a href="#" title=""
+                    class="flex text-sm text-muted-foreground/70 transition-all duration-200 hover:text-white focus:text-white">
+                    About Us
+                  </a>
+                </li>
+                <li>
+                  <a href="/#how-it-works" title=""
+                    class="flex text-sm text-muted-foreground/70 transition-all duration-200 hover:text-white focus:text-white">
+                    How it works
+                  </a>
+                </li>
+                <li>
+                  <a href="/#faq" title=""
+                    class="flex text-sm text-muted-foreground/70 transition-all duration-200 hover:text-white focus:text-white">
+                    FAQ
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <p class="text-xs font-semibold tracking-[0.3em] text-[--accent-color] uppercase">Help</p>
+              <ul class="mt-4 flex flex-col gap-3">
+                <li>
+                  <a href="https://discord.com" title=""
+                    class="flex text-sm text-muted-foreground/70 transition-all duration-200 hover:text-white focus:text-white">
+                    Support
+                  </a>
+                </li>
+                <li>
+                  <a href="/tos" title=""
+                    class="flex text-sm text-muted-foreground/70 transition-all duration-200 hover:text-white focus:text-white">
+                    Terms & Conditions
+                  </a>
+                </li>
+                <li>
+                  <a href="/tos" title=""
+                    class="flex text-sm text-muted-foreground/70 transition-all duration-200 hover:text-white focus:text-white">
+                    Refund Policy
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
-        <p class="my-4 mt-8 py-4 rounded-lg bg-accent/30 text-sm text-center text-white/70">© Copyright 2024,
-          All Rights
-          Reserved by Sellhub.cx</p>
+        <div
+          class="mt-10 flex flex-col gap-3 border-t border-white/10 pt-6 text-sm text-muted-foreground/70 sm:flex-row sm:items-center sm:justify-between">
+          <p>© Copyright 2024, All Rights Reserved by Sellhub.cx</p>
+          <p class="text-xs uppercase tracking-[0.25em] text-muted-foreground/50">Powered by Sellhub</p>
+        </div>
       </div>
     </div>
   </div>
