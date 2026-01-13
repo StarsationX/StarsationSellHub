@@ -103,25 +103,25 @@
   <!-- Footer -->
   <div class="w-full mx-auto max-w-[1400px]">
     <div class="py-10 sm:py-16 lg:py-20 w-full px-4">
-      <div class="mx-auto rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.04] via-white/[0.02] to-transparent px-6 py-10 sm:px-10">
-        <div class="flex flex-col gap-10 lg:flex-row lg:items-start lg:justify-between">
-          <div class="flex-1 lg:max-w-xl lg:pr-8">
-            <div class="flex flex-row items-center gap-3 w-fit">
+      <div class="mx-auto rounded-2xl border border-white/10 bg-white/[0.03] px-6 py-10 sm:px-10">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-y-12 gap-x-10">
+          <div class="col-span-2 md:col-span-3 lg:col-span-4 lg:pr-8">
+            <div class="flex flex-row items-center gap-3 w-fit md:min-w-[203px]">
               <fade-in-image alt="website logo" src="{{ image }}"
-                class="h-9 w-9 rounded-full object-contain ring-1 ring-white/10 shadow-[0_0_20px_rgba(255,255,255,0.08)]"></fade-in-image>
-              <span class="text-xl font-semibold tracking-wide hidden sm:inline-block text-white">
+                class="h-9 w-9 rounded-full object-contain ring-1 ring-white/10"></fade-in-image>
+              <span class="text-xl font-semibold tracking-wide hidden sm:inline-block">
                 {{ name }}
               </span>
             </div>
             <p class="text-sm leading-relaxed text-muted-foreground/70 mt-6 max-w-lg">{{ description }}</p>
-            <ul class="mt-6">
+            <ul class="mt-8">
               {% assign arr = socials %}
               <div class="flex flex-row flex-wrap gap-3">
                 {%- for social in arr %}
                 <a href="{{ social.url }}" aria-label="{{ social.name }}"
                   class="text-white transition duration-200 hover:text-[--accent-color]">
                   <div
-                    class="flex items-center justify-center w-9 h-9 bg-white/5 border border-white/10 rounded-full group transition duration-200 hover:border-[--accent-color]/60 hover:bg-white/10 hover:shadow-[0_0_18px_rgba(255,255,255,0.15)]">
+                    class="flex items-center justify-center w-9 h-9 bg-white/5 border border-white/10 rounded-full group transition duration-200 hover:border-[--accent-color]/60 hover:bg-white/10">
                     {% if social.name == 'discord' %}
                     <svg class="group-hover:text-[--accent-color] duration-200" width="16" height="16"
                       viewBox="0 0 32 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -156,53 +156,51 @@
               </div>
             </ul>
           </div>
-          <div class="flex flex-1 flex-col gap-8 sm:flex-row sm:justify-end sm:gap-12 lg:gap-16">
-            <div>
-              <p class="text-xs font-semibold tracking-[0.3em] text-[--accent-color] uppercase">Our shop</p>
-              <ul class="mt-4 flex flex-col gap-3">
-                <li>
-                  <a href="#" title=""
-                    class="flex text-sm text-muted-foreground/70 transition-all duration-200 hover:text-white focus:text-white">
-                    About Us
-                  </a>
-                </li>
-                <li>
-                  <a href="/#how-it-works" title=""
-                    class="flex text-sm text-muted-foreground/70 transition-all duration-200 hover:text-white focus:text-white">
-                    How it works
-                  </a>
-                </li>
-                <li>
-                  <a href="/#faq" title=""
-                    class="flex text-sm text-muted-foreground/70 transition-all duration-200 hover:text-white focus:text-white">
-                    FAQ
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <p class="text-xs font-semibold tracking-[0.3em] text-[--accent-color] uppercase">Help</p>
-              <ul class="mt-4 flex flex-col gap-3">
-                <li>
-                  <a href="https://discord.com" title=""
-                    class="flex text-sm text-muted-foreground/70 transition-all duration-200 hover:text-white focus:text-white">
-                    Support
-                  </a>
-                </li>
-                <li>
-                  <a href="/tos" title=""
-                    class="flex text-sm text-muted-foreground/70 transition-all duration-200 hover:text-white focus:text-white">
-                    Terms & Conditions
-                  </a>
-                </li>
-                <li>
-                  <a href="/tos" title=""
-                    class="flex text-sm text-muted-foreground/70 transition-all duration-200 hover:text-white focus:text-white">
-                    Refund Policy
-                  </a>
-                </li>
-              </ul>
-            </div>
+          <div>
+            <p class="text-xs font-semibold tracking-[0.3em] text-[--accent-color] uppercase">Our shop</p>
+            <ul class="mt-5 space-y-3">
+              <li>
+                <a href="#" title=""
+                  class="flex text-sm text-muted-foreground/70 transition-all duration-200 hover:text-white focus:text-white">
+                  About Us
+                </a>
+              </li>
+              <li>
+                <a href="/#how-it-works" title=""
+                  class="flex text-sm text-muted-foreground/70 transition-all duration-200 hover:text-white focus:text-white">
+                  How it works
+                </a>
+              </li>
+              <li>
+                <a href="/#faq" title=""
+                  class="flex text-sm text-muted-foreground/70 transition-all duration-200 hover:text-white focus:text-white">
+                  FAQ
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <p class="text-xs font-semibold tracking-[0.3em] text-[--accent-color] uppercase">Help</p>
+            <ul class="mt-5 space-y-3">
+              <li>
+                <a href="https://discord.com" title=""
+                  class="flex text-sm text-muted-foreground/70 transition-all duration-200 hover:text-white focus:text-white">
+                  Support
+                </a>
+              </li>
+              <li>
+                <a href="/tos" title=""
+                  class="flex text-sm text-muted-foreground/70 transition-all duration-200 hover:text-white focus:text-white">
+                  Terms & Conditions
+                </a>
+              </li>
+              <li>
+                <a href="/tos" title=""
+                  class="flex text-sm text-muted-foreground/70 transition-all duration-200 hover:text-white focus:text-white">
+                  Refund Policy
+                </a>
+              </li>
+            </ul>
           </div>
         </div>
         <div
