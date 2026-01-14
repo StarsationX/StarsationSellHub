@@ -1,0 +1,20 @@
+{% assign canonical_base = canonical_url | default: "https://getxenith.cc" %}
+{% assign page_title = seo_title | default: name %}
+{% assign page_description = seo_description | default: description %}
+{% assign page_image = social_image | default: image %}
+
+<title>{{ page_title }}</title>
+<meta name="description" content="{{ page_description }}">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="{{ canonical_base }}">
+
+<meta property="og:title" content="{{ page_title }}">
+<meta property="og:description" content="{{ page_description }}">
+<meta property="og:image" content="{{ page_image }}">
+<meta property="og:url" content="{{ canonical_base }}">
+<meta property="og:type" content="website">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ page_title }}">
+<meta name="twitter:description" content="{{ page_description }}">
+<meta name="twitter:image" content="{{ page_image }}">
